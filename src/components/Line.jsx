@@ -1,16 +1,18 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { TextField } from '@mui/material'
+import styled from 'styled-components';
+import { useStore } from '../hooks/useStore';
 
 const isLetter = (char) => char.toUpperCase() !== char.toLowerCase() || char.codePointAt(0) > 127;
 
-const Line = ({ onSubmit, previousLineSubmitted, submitted, setSubmitted, word }) => {
-  const wordChars = [...word].map((char, index) => {
-    return {
-      char,
-      position: index + 1
-    }
-  });
+// const getLocalStorageValue = (key) => {
+//   // getting stored value
+//   const saved = localStorage.getItem(key);
+//   const initialValue = JSON.parse(saved);
+//   return initialValue || "";
+// }
 
+const Line = ({ onSubmit, previousLineSubmitted, submitted, setSubmitted, word }) => {
   const letterOneRef = useRef(null);
   const letterTwoRef = useRef(null);
   const letterThreeRef = useRef(null);
@@ -18,30 +20,70 @@ const Line = ({ onSubmit, previousLineSubmitted, submitted, setSubmitted, word }
   const letterFiveRef = useRef(null);
   
   const [currentLetterRef, setCurrentLetterRef] = useState(letterOneRef);
-  const [letterOne, setLetterOne] = useState("");
-  const [letterTwo, setLetterTwo] = useState("");
-  const [letterThree, setLetterThree] = useState("");
-  const [letterFour, setLetterFour] = useState("");
-  const [letterFive, setLetterFive] = useState("");
+  const [letterOne, setLetterOne] = useState('');
+  const [letterTwo, setLetterTwo] = useState('');
+  const [letterThree, setLetterThree] = useState('');
+  const [letterFour, setLetterFour] = useState('');
+  const [letterFive, setLetterFive] = useState('');
 
-  const setNewLetter = (e, setLetter, ref) => {
+  const onScreenKeyPressed = useStore(state => state.onScreenKeyPressed);
+
+  // const { 
+  //   onScreenKeyPressed, 
+  //   nextLetterRef, 
+  //   setNextLetterRef, 
+    
+  //   previousLetterRef, 
+  //   setPreviousLetterRef, 
+    
+  //   previousLetterSetter,
+  //   setPreviousLetterSetter,
+    
+  //   currentLetterSetter, 
+  //   setCurrentLetterSetter,
+
+  //   nextLetterSetter, 
+  //   setNextLetterSetter,
+  // } = useStore(state => ({ 
+  //   onScreenKeyPressed: state.onScreenKeyPressed,
+  //   nextLetterRef: state.nextLetterRef,
+  //   setNextLetterRef: state.setNextLetterRef,
+
+  //   previousLetterRef: state.previousLetterRef, 
+  //   setPreviousLetterRef: state.setPreviousLetterRef,
+
+  //   currentLetterSetter: state.currentLetterSetter || setLetterOne,
+  //   setCurrentLetterSetter: state.setCurrentLetterSetter,
+
+  //   previousLetterSetter: state.previousLetterSetter || undefined,
+  //   setPreviousLetterSetter: state.setPreviousLetterSetter,
+
+  //   nextLetterSetter: state.nextLetterSetter || setLetterTwo,
+  //   setNextLetterSetter: state.setNextLetterSetter,
+  // }), shallow);
+
+  const setNewLetter = (e, setLetter, nextRef, nextLetterSetter) => {
     const letter = e.target.value;
 
     if (isLetter(letter)) {
       setLetter(letter.toUpperCase());
-      if (ref) {
-        setCurrentLetterRef(ref)
+      if (nextRef) {
+        setCurrentLetterRef(nextRef)
+        // setNextLetterRef(nextRef)
       }
+      // if (nextLetterSetter) {
+      //   setCurrentLetterSetter(nextLetterSetter);
+      // }
     }
   }
 
-  const onKeyDown = (e, setLetter, prevRef, prevLetter, setPrevLetter) => {
+  const onKeyDown = (e, letter, setLetter, prevRef, setPrevLetter) => {
     if (e.keyCode === 8) {
       setLetter("");
-      if (prevRef) {
+      if (letter === '' && prevRef) {
         setCurrentLetterRef(prevRef)
 
-        if (prevLetter) {
+        if (letter === '' && setPrevLetter) {
           setPrevLetter("");
         }
       }
@@ -55,7 +97,7 @@ const Line = ({ onSubmit, previousLineSubmitted, submitted, setSubmitted, word }
       if (letterOne !== "" && letterTwo !== "" && letterThree !== "" && letterFour !== "" && letterFive !== "") {
         const letters = [letterOne, letterTwo, letterThree, letterFour, letterFive];
 
-        onSubmit(letters, setSubmitted);
+        onSubmit(letters, setSubmitted, setCurrentLetterRef);
       }
     }
   } 
@@ -64,11 +106,22 @@ const Line = ({ onSubmit, previousLineSubmitted, submitted, setSubmitted, word }
     currentLetterRef?.current?.focus();
   }, [currentLetterRef]);
 
-  const letterStyle = {
-      width: '50px', 
-      pointerEvents: 'none', 
-      caretColor: 'transparent',
+  const inputProps = {
+    maxLength: 1, 
+    style: { 
+      textAlign: 'center',    
+      paddingTop: '15px',
+      paddingBottom: '10px',
+      fontSize: '20px' 
+    }
   }
+
+  const wordChars = [...word].map((char, index) => {
+    return {
+      char,
+      position: index + 1
+    }
+  });
 
   const getColour = (letter, position) => {
     let color = 'white';
@@ -104,73 +157,51 @@ const Line = ({ onSubmit, previousLineSubmitted, submitted, setSubmitted, word }
     };
   }, [handleUserKeyPressUnfocused]);
 
+  useEffect(() => {
+    debugger;
+    if (onScreenKeyPressed) {
+      console.log(onScreenKeyPressed);
+    }
+  }, [onScreenKeyPressed])
+
+  // useEffect(() => {
+  //   getLocalStorageValue(id)
+  // }, [id])
+
   return (
     <fieldset disabled={submitted || !previousLineSubmitted} style={{ border: 'none' }}>
-      <TextField
-        style={letterStyle}
-        inputProps={
-          { 
-            maxLength: 1, 
-            onKeyDown: e => onKeyDown(e, setLetterOne),
-          }
-        }
+      <StyledTextField
+        variant="standard"
+        inputProps={{ ...inputProps, onKeyDown: e => onKeyDown(e, letterOne, setLetterOne) }}
         value={letterOne}
         onChange={e => setNewLetter(e, setLetterOne, letterTwoRef)} 
         inputRef={letterOneRef}
         sx={{ input: { color: getColour(letterOne, 1) } }}
         autoFocus
       />
-      <TextField
-        style={letterStyle}
-        inputProps={
-          { 
-            maxLength: 1, 
-            // handle backspace and tab
-            onKeyDown: e => onKeyDown(e, setLetterTwo, letterOneRef, letterOne, setLetterOne) 
-          }
-        }
+      <StyledTextField
+        inputProps={{ ...inputProps, onKeyDown: e => onKeyDown(e, letterTwo, setLetterTwo, letterOneRef, setLetterOne) }}
         value={letterTwo}
         onChange={e => setNewLetter(e, setLetterTwo, letterThreeRef)} 
         inputRef={letterTwoRef}
         sx={{ input: { color: getColour(letterTwo, 2) } }}
       />
-      <TextField
-        style={letterStyle}
-        inputProps={
-          { 
-            maxLength: 1, 
-            // handle backspace and tab
-            onKeyDown: e => onKeyDown(e, setLetterThree, letterTwoRef, letterTwo, setLetterTwo) 
-          }
-        }
+      <StyledTextField
+        inputProps={{ ...inputProps, onKeyDown: e => onKeyDown(e, letterThree, setLetterThree, letterTwoRef, setLetterTwo) }}
         value={letterThree}
         onChange={e => setNewLetter(e, setLetterThree, letterFourRef)} 
         inputRef={letterThreeRef}
         sx={{ input: { color: getColour(letterThree, 3) } }}
       />
-      <TextField
-        style={letterStyle}
-        inputProps={
-          { 
-            maxLength: 1, 
-            // handle backspace and tab
-            onKeyDown: e => onKeyDown(e, setLetterFour, letterThreeRef, letterThree, setLetterThree) 
-          }
-        }
+      <StyledTextField
+        inputProps={{ ...inputProps, onKeyDown: e => onKeyDown(e, letterFour, setLetterFour, letterThreeRef, setLetterThree) }}
         value={letterFour}
         onChange={e => setNewLetter(e, setLetterFour, letterFiveRef)} 
         inputRef={letterFourRef}
         sx={{ input: { color: getColour(letterFour, 4) } }}
       />
-      <TextField
-        style={letterStyle}
-        inputProps={
-          { 
-            maxLength: 1, 
-            // handle backspace and tab
-            onKeyDown: e => onKeyDown(e, setLetterFive, letterFourRef, letterFour, setLetterFour) 
-          }
-        }
+      <StyledTextField
+        inputProps={{ ...inputProps, onKeyDown: e => onKeyDown(e, letterFive, setLetterFive, letterFourRef, setLetterFour) }}
         value={letterFive}
         onChange={e => setNewLetter(e, setLetterFive)} 
         inputRef={letterFiveRef}
@@ -181,3 +212,11 @@ const Line = ({ onSubmit, previousLineSubmitted, submitted, setSubmitted, word }
 }
 
 export default Line;
+
+const StyledTextField = styled(TextField)`
+  width: 50px; 
+  pointer-events: none; 
+  caret-color: transparent;
+  outline: solid white thin;
+  margin: 5px !important;
+`
