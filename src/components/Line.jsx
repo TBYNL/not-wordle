@@ -158,7 +158,6 @@ const Line = ({ onSubmit, previousLineSubmitted, submitted, setSubmitted, word }
   }, [handleUserKeyPressUnfocused]);
 
   useEffect(() => {
-    debugger;
     if (onScreenKeyPressed) {
       console.log(onScreenKeyPressed);
     }
@@ -180,6 +179,7 @@ const Line = ({ onSubmit, previousLineSubmitted, submitted, setSubmitted, word }
         autoFocus
       />
       <StyledTextField
+        variant="standard"
         inputProps={{ ...inputProps, onKeyDown: e => onKeyDown(e, letterTwo, setLetterTwo, letterOneRef, setLetterOne) }}
         value={letterTwo}
         onChange={e => setNewLetter(e, setLetterTwo, letterThreeRef)} 
@@ -187,6 +187,7 @@ const Line = ({ onSubmit, previousLineSubmitted, submitted, setSubmitted, word }
         sx={{ input: { color: getColour(letterTwo, 2) } }}
       />
       <StyledTextField
+        variant="standard"
         inputProps={{ ...inputProps, onKeyDown: e => onKeyDown(e, letterThree, setLetterThree, letterTwoRef, setLetterTwo) }}
         value={letterThree}
         onChange={e => setNewLetter(e, setLetterThree, letterFourRef)} 
@@ -194,6 +195,7 @@ const Line = ({ onSubmit, previousLineSubmitted, submitted, setSubmitted, word }
         sx={{ input: { color: getColour(letterThree, 3) } }}
       />
       <StyledTextField
+        variant="standard"
         inputProps={{ ...inputProps, onKeyDown: e => onKeyDown(e, letterFour, setLetterFour, letterThreeRef, setLetterThree) }}
         value={letterFour}
         onChange={e => setNewLetter(e, setLetterFour, letterFiveRef)} 
@@ -201,6 +203,7 @@ const Line = ({ onSubmit, previousLineSubmitted, submitted, setSubmitted, word }
         sx={{ input: { color: getColour(letterFour, 4) } }}
       />
       <StyledTextField
+        variant="standard"
         inputProps={{ ...inputProps, onKeyDown: e => onKeyDown(e, letterFive, setLetterFive, letterFourRef, setLetterFour) }}
         value={letterFive}
         onChange={e => setNewLetter(e, setLetterFive)} 

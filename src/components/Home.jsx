@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Words, RandomWord } from '../words'
 import { Keyboard } from './Keyboard/Keyboard';
 import Line from './Line';
+import { Button, Modal, Box, Typography } from '@mui/material';
 
 // const getLocalStorageValue = (key) => {
 //   // getting stored value
@@ -24,6 +25,10 @@ const Home = () => {
   const [correctLetters, setCorrectLetters] = useState([]);
   const [outOfPositionLetters, setOutOfPositionLetters] = useState([]);
   const [incorrectLetters, setIncorrectLetters] = useState([]);
+
+  const [wordGuessed, setWordGuessed] = useState(false);
+  const [totalGuesses, setTotalGuesses] = useState(0);
+  const [showModal, setShowModal] = useState(false);
 
   const setAllLinesSubmitted = () => {
     setLineOneSubmitted(true);
@@ -73,6 +78,7 @@ const Home = () => {
 
     if (wordGuess === word) {
       setAllLinesSubmitted();
+      setWordGuessed(true);
       console.log("Hooray");
     } else {
       if (allWords.includes(wordGuess.toLowerCase())) {
@@ -82,10 +88,15 @@ const Home = () => {
         setLineSubmitted(true);
         setCurrentLetterRef(null);
         document.activeElement.blur();
+        setTotalGuesses(totalGuesses + 1);
         // storedValues.submitted = true;
         // localStorage.setItem(`${id}`, JSON.stringify(storedValues));
       }
     }
+  }
+
+  const getNewWord = () => {
+    window.location.reload(true);
   }
 
   // useEffect(() => {
@@ -95,14 +106,32 @@ const Home = () => {
   //   setLineOneSubmitted(getLocalStorageValue(4)?.values?.submitted || false);
   //   setLineOneSubmitted(getLocalStorageValue(5)?.values?.submitted || false);
   // }, []);
+
+  useEffect(() => {
+    if (!wordGuessed && totalGuesses === 6) {
+      setShowModal(true);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [wordGuessed, totalGuesses])
   
+  const style = {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: 400,
+    bgcolor: 'background.paper',
+    border: '2px solid #000',
+    boxShadow: 24,
+    p: 4,
+  };
+
   return (
     <div style={{ pointerEvents: false, backgroundColor: 'black', textAlign: 'center', color: 'white' }}>
       <h1>Not Wordle</h1>
       {/* <div style={{ color: 'white' }}>{word}</div> */}
       {/* <div>{lettersUsed.map(letter => letter)}</div> */}
       <Line 
-        id={1}
         onSubmit={onSubmitLine} 
         previousLineSubmitted={true}
         submitted={lineOneSubmitted}
@@ -110,7 +139,6 @@ const Home = () => {
         word={word}
       />
       <Line 
-        id={2}
         onSubmit={onSubmitLine} 
         previousLineSubmitted={lineOneSubmitted}
         submitted={lineTwoSubmitted}
@@ -118,7 +146,6 @@ const Home = () => {
         word={word}
       />      
       <Line 
-        id={3}
         onSubmit={onSubmitLine} 
         previousLineSubmitted={lineTwoSubmitted}
         submitted={lineThreeSubmitted}
@@ -126,7 +153,6 @@ const Home = () => {
         word={word}
       />      
       <Line 
-        id={4}
         onSubmit={onSubmitLine} 
         previousLineSubmitted={lineThreeSubmitted}
         submitted={lineFourSubmitted}
@@ -134,7 +160,6 @@ const Home = () => {
         word={word}
       />      
       <Line 
-        id={5}
         onSubmit={onSubmitLine} 
         previousLineSubmitted={lineFourSubmitted}
         submitted={lineFiveSubmitted}
@@ -142,7 +167,6 @@ const Home = () => {
         word={word}
       />      
       <Line
-        id={6} 
         onSubmit={onSubmitLine} 
         previousLineSubmitted={lineFiveSubmitted}
         submitted={lineSixSubmitted}
@@ -156,6 +180,24 @@ const Home = () => {
           incorrectLetters={incorrectLetters}
         />
       </div>
+      <Modal
+        open={showModal}
+        onClose={() => setShowModal(false)}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={style}>
+          <Typography id="modal-modal-title" variant="h3" component="h2" sx={{ color: '#e23636'}}>
+            Unlucky mate
+          </Typography>
+          <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+            The word was {word}
+          </Typography>
+          <div>
+            <Button variant="contained" onClick={getNewWord}>Get new word</Button>
+          </div>
+        </Box>
+      </Modal>
     </div>
   );
 }
