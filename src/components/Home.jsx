@@ -3,7 +3,6 @@ import { Words, RandomWord } from '../words'
 import { Keyboard } from './Keyboard/Keyboard';
 import Line from './Line';
 import { Button, Modal, Box, Typography } from '@mui/material';
-import { NavigationBar } from './NavigationBar';
 import styled from 'styled-components';
 import { useStore } from '../hooks/useStore';
 
