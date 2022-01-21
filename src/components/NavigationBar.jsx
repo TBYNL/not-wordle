@@ -9,14 +9,14 @@ import AccountCircle from '@mui/icons-material/AccountCircle';
 import Switch from '@mui/material/Switch';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormGroup from '@mui/material/FormGroup';
-import MenuItem from '@mui/material/MenuItem';
-import Menu from '@mui/material/Menu';
+// import MenuItem from '@mui/material/MenuItem';
+// import Menu from '@mui/material/Menu';
 import { useStore } from '../hooks/useStore';
 import styled from 'styled-components';
 
 export const NavigationBar = () => {
   const { darkMode, setDarkMode } = useStore(state => ({ darkMode: state.darkMode, setDarkMode: state.setDarkMode }));
-  const [anchorEl, setAnchorEl] = React.useState(null);
+  // const [anchorEl, setAnchorEl] = React.useState(null);
 
   const darkModeText = darkMode ? 'Dark' : 'Light';
   const textColor = darkMode ? '#EEEEEE' : 'black';
@@ -26,9 +26,9 @@ export const NavigationBar = () => {
     setDarkMode(event.target.checked);
   };
 
-  const handleMenu = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
+  // const handleMenu = (event) => {
+  //   setAnchorEl(event.currentTarget);
+  // };
 
   // const handleClose = () => {
   //   setAnchorEl(null);
@@ -69,7 +69,7 @@ export const NavigationBar = () => {
               aria-label="account of current user"
               aria-controls="menu-appbar"
               aria-haspopup="true"
-              onClick={handleMenu}
+              // onClick={handleMenu}
               sx={{ color: '#C0C0C0' }}
             >
               <AccountCircle />
