@@ -6,7 +6,7 @@ import { useStore } from './hooks/useStore';
 function App() {
 
   const darkMode = useStore(state => state.darkMode)
-  document.body.style.backgroundColor = darkMode ? 'black' : 'white';
+  document.body.style.backgroundColor = darkMode ? 'rgba(0, 0, 0, 0.8)' : '#EEEEEE';
 
   return (
     <>

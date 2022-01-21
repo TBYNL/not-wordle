@@ -30,7 +30,7 @@ const Line = ({ onSubmit, previousLineSubmitted, submitted, setSubmitted, word }
   const onScreenKeyPressed = useStore(state => state.onScreenKeyPressed);
   const darkMode = useStore(state => state.darkMode);
 
-  const inputTextColor = darkMode ? 'black' : '#EEEEEE';
+  const inputTextColor = darkMode ? 'rgba(0, 0, 0, 0.8)' : '#EEEEEE';
 
   const setNewLetter = (e, setLetter, nextRef, nextLetterSetter) => {
     const letter = e.target.value;
@@ -196,6 +196,6 @@ const StyledTextField = styled(({ darkMode, ...props}) => <TextField {...props} 
   width: 50px; 
   pointer-events: none; 
   caret-color: transparent;
-  outline: solid ${props => props.darkMode ? '#EEEEEE' : 'black'} thin;
+  outline: solid ${props => props.darkMode ? '#EEEEEE' : 'rgba(0, 0, 0, 0.8)'} thin;
   margin: 5px !important;
 `;

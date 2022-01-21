@@ -2,9 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { Words, RandomWord } from '../words'
 import { Keyboard } from './Keyboard/Keyboard';
 import Line from './Line';
-import { Button, Modal, Box, Typography } from '@mui/material';
 import styled from 'styled-components';
 import { useStore } from '../hooks/useStore';
+import { Modal } from './Modal';
+import { Button } from '@mui/material';
 
 // const getLocalStorageValue = (key) => {
 //   // getting stored value
@@ -126,18 +127,6 @@ const Home = () => {
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [wordGuessed, totalGuesses])
-  
-  const style = {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    width: 400,
-    bgcolor: 'background.paper',
-    border: '2px solid #000',
-    boxShadow: 24,
-    p: 4,
-  };
 
   return (
     <HomeWrapper darkMode={darkMode}>
@@ -190,30 +179,15 @@ const Home = () => {
           incorrectLetters={incorrectLetters}
         />
       </div>
-      <Modal
-        open={showModal}
-        onClose={() => setShowModal(false)}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
-        <Box sx={style}>
-          <Typography id="modal-modal-title" variant="h3" component="h2" sx={{ color: '#e23636'}}>
-            Unlucky mate
-          </Typography>
-          <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-            The word was {word}
-          </Typography>
-          <div>
-            <Button variant="contained" onClick={getNewWord}>Get new word</Button>
-          </div>
-        </Box>
+      <Modal showModal={showModal} onClose={() => setShowModal(false)} title="Unlucky mate" description={`The word was {word}`}>
+        <Button variant="contained" onClick={getNewWord}>Get new word</Button>
       </Modal>
     </HomeWrapper>
   );
 }
 
 const HomeWrapper = styled.div`
-  background-color: ${props => props.darkMode ? 'black' : '#EEEEEE'}; 
+  background-color: ${props => props.darkMode ? 'rgba(0, 0, 0, 0.8)' : '#EEEEEE'}; 
   text-align: center;
 `
 

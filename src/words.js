@@ -79,7 +79,7 @@ export const Words = [
   'short',
   'hands',
   'state',
-  'black',
+  'rgba(0, 0, 0, 0.8)',
   'shown',
   'stood',
   'front',

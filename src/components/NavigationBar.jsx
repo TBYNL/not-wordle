@@ -19,8 +19,8 @@ export const NavigationBar = () => {
   // const [anchorEl, setAnchorEl] = React.useState(null);
 
   const darkModeText = darkMode ? 'Dark' : 'Light';
-  const textColor = darkMode ? '#EEEEEE' : 'black';
-  const backgroundColor = darkMode ? 'black' : '#EEEEEE';
+  const textColor = darkMode ? '#EEEEEE' : 'rgba(0, 0, 0, 0.8)';
+  const backgroundColor = darkMode ? 'rgba(0, 0, 0, 0.8)' : '#EEEEEE';
 
   const handleChange = (event) => {
     setDarkMode(event.target.checked);
