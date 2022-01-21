@@ -1,21 +1,16 @@
 import create from 'zustand'
 
+const getLocalStorage = (key) => JSON.parse(window.localStorage.getItem(key));
+const setLocalStorage = (key, value) =>
+  window.localStorage.setItem(key, JSON.stringify(value));
+
 export const useStore = create(set => ({
-  nextLetterRef: undefined,
-  setNextLetterRef: (ref) => set({ nextLetterRef: ref }),
-
-  previousLetterRef: undefined,
-  setPreviousLetterRef: (ref) => set({ previousLetterRef: ref }),
-
-  previousLetterSetter: undefined,
-  setPreviousLetterSetter: (setter) => set({ previousLetterSetter: setter }),
-
-  currentLetterSetter: undefined,
-  setCurrentLetterSetter: (setter) => set({ currentLetterSetter: setter }),
-
-  nextLetterSetter: undefined,
-  setNextLetterSetter: (setter) => set({ nextLetterSetter: setter }),
-
   onScreenKeyPressed: undefined,
-  setOnScreenKeyPressed: (key) => set({ onScreenKeyPressed: key })
+  setOnScreenKeyPressed: (key) => set({ onScreenKeyPressed: key }),
+
+  darkMode: getLocalStorage("darkMode") ?? true,
+  setDarkMode: (darkMode) => set(state => {
+    setLocalStorage("darkMode", darkMode);
+    return { darkMode }
+  })
 }))

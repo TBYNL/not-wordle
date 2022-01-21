@@ -8,6 +8,7 @@ export const Keyboard = ({ correctLetters, outOfPositionLetters, incorrectLetter
   const layoutName = "default";
   const keyboard = useRef();
   const setOnScreenKeyPressed = useStore(state => state.setOnScreenKeyPressed);
+  const darkMode = useStore(state => state.darkMode ? "dark" : "light");
 
   // const onChange = input => {
   //   console.log("Input changed", input);
@@ -21,7 +22,7 @@ export const Keyboard = ({ correctLetters, outOfPositionLetters, incorrectLetter
   return (
     <SimpleKeyboard
       keyboardRef={r => (keyboard.current = r)}
-      theme={"hg-theme-default myTheme1"}
+      theme={`hg-theme-default myTheme1 ${darkMode}`}
       layoutName={layoutName}
       // onChange={input => onChange(input)}
       onKeyPress={button => onKeyPress(button)}
@@ -29,10 +30,14 @@ export const Keyboard = ({ correctLetters, outOfPositionLetters, incorrectLetter
         default: [
           "Q W E R T Y U I O P",
           "A S D F G H J K L",
-          "{enter} Z X C V B N M {bksp}",
+          "Enter Z X C V B N M Backspace",
         ]
       }}
       buttonTheme={[
+        { 
+          class: darkMode,
+          buttons: "Q W E R T Y U I O P A S D F G H J K L Enter Z X C V B N M Backspace"
+        },
         {
           class: "hg-red",
           buttons: ` ${incorrectLetters.join(" ")}`

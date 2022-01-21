@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { TextField } from '@mui/material'
 import styled from 'styled-components';
 import { useStore } from '../hooks/useStore';
+import keyboardKey from 'keyboard-key';
 
 const isLetter = (char) => char.toUpperCase() !== char.toLowerCase() || char.codePointAt(0) > 127;
 
@@ -27,40 +28,9 @@ const Line = ({ onSubmit, previousLineSubmitted, submitted, setSubmitted, word }
   const [letterFive, setLetterFive] = useState('');
 
   const onScreenKeyPressed = useStore(state => state.onScreenKeyPressed);
+  const darkMode = useStore(state => state.darkMode);
 
-  // const { 
-  //   onScreenKeyPressed, 
-  //   nextLetterRef, 
-  //   setNextLetterRef, 
-    
-  //   previousLetterRef, 
-  //   setPreviousLetterRef, 
-    
-  //   previousLetterSetter,
-  //   setPreviousLetterSetter,
-    
-  //   currentLetterSetter, 
-  //   setCurrentLetterSetter,
-
-  //   nextLetterSetter, 
-  //   setNextLetterSetter,
-  // } = useStore(state => ({ 
-  //   onScreenKeyPressed: state.onScreenKeyPressed,
-  //   nextLetterRef: state.nextLetterRef,
-  //   setNextLetterRef: state.setNextLetterRef,
-
-  //   previousLetterRef: state.previousLetterRef, 
-  //   setPreviousLetterRef: state.setPreviousLetterRef,
-
-  //   currentLetterSetter: state.currentLetterSetter || setLetterOne,
-  //   setCurrentLetterSetter: state.setCurrentLetterSetter,
-
-  //   previousLetterSetter: state.previousLetterSetter || undefined,
-  //   setPreviousLetterSetter: state.setPreviousLetterSetter,
-
-  //   nextLetterSetter: state.nextLetterSetter || setLetterTwo,
-  //   setNextLetterSetter: state.setNextLetterSetter,
-  // }), shallow);
+  const inputTextColor = darkMode ? 'black' : '#EEEEEE';
 
   const setNewLetter = (e, setLetter, nextRef, nextLetterSetter) => {
     const letter = e.target.value;
@@ -69,16 +39,13 @@ const Line = ({ onSubmit, previousLineSubmitted, submitted, setSubmitted, word }
       setLetter(letter.toUpperCase());
       if (nextRef) {
         setCurrentLetterRef(nextRef)
-        // setNextLetterRef(nextRef)
       }
-      // if (nextLetterSetter) {
-      //   setCurrentLetterSetter(nextLetterSetter);
-      // }
     }
   }
 
   const onKeyDown = (e, letter, setLetter, prevRef, setPrevLetter) => {
-    if (e.keyCode === 8) {
+    const key = keyboardKey.getCode(e);
+    if (key === 8) {
       setLetter("");
       if (letter === '' && prevRef) {
         setCurrentLetterRef(prevRef)
@@ -88,12 +55,12 @@ const Line = ({ onSubmit, previousLineSubmitted, submitted, setSubmitted, word }
         }
       }
     }
-    if (e.keyCode === 9) {
+    if (key === 9) {
       e.stopPropagation();
       e.preventDefault();
     }
 
-    if (e.keyCode === 13) {
+    if (key === 13) {
       if (letterOne !== "" && letterTwo !== "" && letterThree !== "" && letterFour !== "" && letterFive !== "") {
         const letters = [letterOne, letterTwo, letterThree, letterFour, letterFive];
 
@@ -110,9 +77,8 @@ const Line = ({ onSubmit, previousLineSubmitted, submitted, setSubmitted, word }
     maxLength: 1, 
     style: { 
       textAlign: 'center',    
-      paddingTop: '15px',
-      paddingBottom: '10px',
-      fontSize: '20px' 
+      fontSize: '30px',
+      fontWeight: 900
     }
   }
 
@@ -124,18 +90,18 @@ const Line = ({ onSubmit, previousLineSubmitted, submitted, setSubmitted, word }
   });
 
   const getColour = (letter, position) => {
-    let color = 'white';
+    let color = darkMode ? '#EEEEEE' : 'rgba(0, 0, 0, 0.8)';
 
     if (word.includes(letter)) {
-      color = 'yellow';
+      color = '#edb95e';
 
       if (wordChars.find(char => char.position === position).char === letter) {
-        color = 'green';
+        color = '#82dd55';
       }
     }
 
     if (!submitted) {
-      color = 'white'
+      color = darkMode ? '#EEEEEE' : 'rgba(0, 0, 0, 0.8)'
     }
  
      return color;
@@ -158,57 +124,67 @@ const Line = ({ onSubmit, previousLineSubmitted, submitted, setSubmitted, word }
   }, [handleUserKeyPressUnfocused]);
 
   useEffect(() => {
-    if (onScreenKeyPressed) {
-      console.log(onScreenKeyPressed);
-    }
-  }, [onScreenKeyPressed])
+    if (onScreenKeyPressed && previousLineSubmitted) {
+      if (currentLetterRef?.current) {
+        currentLetterRef?.current?.focus();
+        var keyDown = new KeyboardEvent("keydown", {bubbles: true, cancelable: true, key: onScreenKeyPressed, keyCode: onScreenKeyPressed});
 
-  // useEffect(() => {
-  //   getLocalStorageValue(id)
-  // }, [id])
+        document.activeElement.dispatchEvent(keyDown);
+
+        // var onChange = new InputEvent("onchange", { target: { value: onScreenKeyPressed } })
+        // document.activeElement.dispatchEvent(onChange);
+      }
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [onScreenKeyPressed])
 
   return (
     <fieldset disabled={submitted || !previousLineSubmitted} style={{ border: 'none' }}>
       <StyledTextField
+        darkMode={darkMode}
         variant="standard"
         inputProps={{ ...inputProps, onKeyDown: e => onKeyDown(e, letterOne, setLetterOne) }}
         value={letterOne}
         onChange={e => setNewLetter(e, setLetterOne, letterTwoRef)} 
         inputRef={letterOneRef}
-        sx={{ input: { color: getColour(letterOne, 1) } }}
+        sx={{ input: { color: inputTextColor, backgroundColor: getColour(letterOne, 1) } }}
         autoFocus
       />
       <StyledTextField
+        darkMode={darkMode}
         variant="standard"
         inputProps={{ ...inputProps, onKeyDown: e => onKeyDown(e, letterTwo, setLetterTwo, letterOneRef, setLetterOne) }}
         value={letterTwo}
         onChange={e => setNewLetter(e, setLetterTwo, letterThreeRef)} 
         inputRef={letterTwoRef}
-        sx={{ input: { color: getColour(letterTwo, 2) } }}
+        sx={{ input: { color: inputTextColor, backgroundColor: getColour(letterTwo, 2) } }}
       />
       <StyledTextField
+        darkMode={darkMode}
         variant="standard"
         inputProps={{ ...inputProps, onKeyDown: e => onKeyDown(e, letterThree, setLetterThree, letterTwoRef, setLetterTwo) }}
         value={letterThree}
         onChange={e => setNewLetter(e, setLetterThree, letterFourRef)} 
         inputRef={letterThreeRef}
-        sx={{ input: { color: getColour(letterThree, 3) } }}
+        sx={{ input: { color: inputTextColor, backgroundColor: getColour(letterThree, 3) } }}
       />
       <StyledTextField
+        darkMode={darkMode}
         variant="standard"
         inputProps={{ ...inputProps, onKeyDown: e => onKeyDown(e, letterFour, setLetterFour, letterThreeRef, setLetterThree) }}
         value={letterFour}
         onChange={e => setNewLetter(e, setLetterFour, letterFiveRef)} 
         inputRef={letterFourRef}
-        sx={{ input: { color: getColour(letterFour, 4) } }}
+        sx={{ input: { color: inputTextColor, backgroundColor: getColour(letterFour, 4) } }}
       />
       <StyledTextField
+        darkMode={darkMode}
         variant="standard"
         inputProps={{ ...inputProps, onKeyDown: e => onKeyDown(e, letterFive, setLetterFive, letterFourRef, setLetterFour) }}
         value={letterFive}
         onChange={e => setNewLetter(e, setLetterFive)} 
         inputRef={letterFiveRef}
-        sx={{ input: { color: getColour(letterFive, 5) } }}
+        sx={{ input: { color: inputTextColor, backgroundColor: getColour(letterFive, 5) } }}
       />
     </fieldset>
   );
@@ -216,10 +192,10 @@ const Line = ({ onSubmit, previousLineSubmitted, submitted, setSubmitted, word }
 
 export default Line;
 
-const StyledTextField = styled(TextField)`
+const StyledTextField = styled(({ darkMode, ...props}) => <TextField {...props} />)`
   width: 50px; 
   pointer-events: none; 
   caret-color: transparent;
-  outline: solid white thin;
+  outline: solid ${props => props.darkMode ? '#EEEEEE' : 'black'} thin;
   margin: 5px !important;
-`
+`;

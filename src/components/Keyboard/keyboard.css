@@ -1,16 +1,31 @@
-.simple-keyboard {
-  align-content: center;
-  max-width: 850px;
+:root {
+  --light-mode-color: rgba(0, 0, 0, 0.8);
+  --light-mode-bgcolor: #EEEEEE;
+  --light-mode-active-color: #417505;
+  --light-mode-border: rgba(0, 0, 0, 0.8);
+
+  --dark-mode-color: #EEEEEE;
+  --dark-mode-bgcolor: rgba(0, 0, 0, 0.8);
+  --dark-mode-active-color: #ed6c02;
 }
 
-/*
-  Theme: myTheme1
-*/
+.simple-keyboard {
+  align-content: center;
+  max-width: 90%;
+}
+
 .simple-keyboard.myTheme1 {
-  background-color: rgba(0, 0, 0, 0.8);
   border-radius: 0;
   border-bottom-right-radius: 5px;
   border-bottom-left-radius: 5px;
+}
+
+.simple-keyboard.myTheme1.dark {
+  background-color: var(--dark-mode-bgcolor);
+}
+
+.simple-keyboard.myTheme1.light {
+  background-color: var(--light-mode-bgcolor);
 }
 
 .simple-keyboard.myTheme1 .hg-button {
@@ -18,32 +33,46 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  background: rgba(0, 0, 0, 0.5);
-  color: white;
+}
+
+.simple-keyboard.myTheme1 .hg-button.dark {
+  background: var(--dark-mode-bgcolor);
+  color: var(--dark-mode-color);
+}
+
+.simple-keyboard.myTheme1 .hg-button.light {
+  background: var(--light-mode-bgcolor);
+  color: var(--light-mode-color);
+  border-bottom: 1px solid var(--light-mode-border);
+}
+
+.simple-keyboard.myTheme1 .hg-button.dark:active {
+  background: var(--dark-mode-active-color);
+  color: var(--dark-mode-color);
 }
 
 .simple-keyboard.myTheme1 .hg-button:active {
-  background: #1c4995;
-  color: white;
+  background: var(--light-mode-active-color);
+  color: var(--light-mode-color);
 }
 
-#root .simple-keyboard.myTheme1 + .simple-keyboard-preview {
+/* #root .simple-keyboard.myTheme1 + .simple-keyboard-preview {
   background: #1c4995;
-}
+} */
 
 .simple-keyboard.hg-layout-default .hg-button.hg-red {
   background: #e23636;
-  color: white;
+  color: #EEEEEE;
 }
 
 .simple-keyboard.hg-layout-default .hg-button.hg-green {
   background: #82dd55;
-  color: white;
+  color: #EEEEEE;
 }
 
 .simple-keyboard.hg-layout-default .hg-button.hg-yellow {
   background: #edb95e;
-  color: white;
+  color: #EEEEEE;
 }
 
 .simple-keyboard.hg-layout-default .hg-button.hg-highlight {

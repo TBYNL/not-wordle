@@ -3,6 +3,9 @@ import { Words, RandomWord } from '../words'
 import { Keyboard } from './Keyboard/Keyboard';
 import Line from './Line';
 import { Button, Modal, Box, Typography } from '@mui/material';
+import { NavigationBar } from './NavigationBar';
+import styled from 'styled-components';
+import { useStore } from '../hooks/useStore';
 
 // const getLocalStorageValue = (key) => {
 //   // getting stored value
@@ -30,6 +33,8 @@ const Home = () => {
   const [totalGuesses, setTotalGuesses] = useState(0);
   const [showModal, setShowModal] = useState(false);
 
+  const darkMode = useStore(state => state.darkMode);
+
   const setAllLinesSubmitted = () => {
     setLineOneSubmitted(true);
     setLineTwoSubmitted(true);
@@ -45,7 +50,7 @@ const Home = () => {
     //   values: [],
     //   submitted: false
     // };
-    let wordGuess = '';
+    let wordGuess = letters.join("");
     let updatedCorrectLetters = correctLetters;
     let updatedIncorrectLetters = incorrectLetters;
     let updatedOutOfPositionLetters = outOfPositionLetters;
@@ -57,20 +62,30 @@ const Home = () => {
       }
     });
 
+    if (!allWords.includes(wordGuess.toLowerCase())) {
+      return;
+    }
+
     letters.forEach((letter, index) => {
-      wordGuess+=letter;
-      // storedValues.values[index] = { key: index + 1, value: letter }
       if (word.includes(letter)) {
         if (wordChars.find(char => char.position === index + 1).char === letter) {
+          // correct
           updatedCorrectLetters.push(letter);
           setCorrectLetters(updatedCorrectLetters);
+
+          if (updatedOutOfPositionLetters.includes(letter)) {
+            updatedOutOfPositionLetters = updatedOutOfPositionLetters.filter(oopLetter => oopLetter !== letter)
+            setOutOfPositionLetters(updatedOutOfPositionLetters);
+          }
         } else {
           if (!updatedCorrectLetters.includes(letter)) {
+            // correct + out of position
             updatedOutOfPositionLetters.push(letter);
             setOutOfPositionLetters(updatedOutOfPositionLetters);
           }
         }
       } else {
+        // incorrect
         updatedIncorrectLetters.push(letter);
         setIncorrectLetters(updatedIncorrectLetters);
       }
@@ -81,7 +96,7 @@ const Home = () => {
       setWordGuessed(true);
       console.log("Hooray");
     } else {
-      if (allWords.includes(wordGuess.toLowerCase())) {
+      
         // const lettersUsedArray = [...lettersUsed, ...letters]
 
         // setLettersUsed([...new Set(lettersUsedArray)]);
@@ -91,7 +106,6 @@ const Home = () => {
         setTotalGuesses(totalGuesses + 1);
         // storedValues.submitted = true;
         // localStorage.setItem(`${id}`, JSON.stringify(storedValues));
-      }
     }
   }
 
@@ -127,10 +141,7 @@ const Home = () => {
   };
 
   return (
-    <div style={{ pointerEvents: false, backgroundColor: 'black', textAlign: 'center', color: 'white' }}>
-      <h1>Not Wordle</h1>
-      {/* <div style={{ color: 'white' }}>{word}</div> */}
-      {/* <div>{lettersUsed.map(letter => letter)}</div> */}
+    <HomeWrapper darkMode={darkMode}>
       <Line 
         onSubmit={onSubmitLine} 
         previousLineSubmitted={true}
@@ -198,8 +209,13 @@ const Home = () => {
           </div>
         </Box>
       </Modal>
-    </div>
+    </HomeWrapper>
   );
 }
+
+const HomeWrapper = styled.div`
+  background-color: ${props => props.darkMode ? 'black' : '#EEEEEE'}; 
+  text-align: center;
+`
 
 export default Home;
