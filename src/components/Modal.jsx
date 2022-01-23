@@ -24,16 +24,11 @@ export const Modal = ({ showModal, onClose, title, description, children }) => {
     >
       <Box sx={style}>
         <Typography id="modal-modal-title" variant="h3" component="h2" sx={{ color: '#e23636'}}>
-          {/* Unlucky mate */}
           {title}
         </Typography>
         <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-          {/* The word was {word} */}
           {description}
         </Typography>
-        {/* <div>
-          <Button variant="contained" onClick={getNewWord}>Get new word</Button>
-        </div> */}
         {children}
       </Box>
     </MUIModal>

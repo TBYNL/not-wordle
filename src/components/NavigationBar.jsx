@@ -12,30 +12,52 @@ import FormGroup from '@mui/material/FormGroup';
 // import MenuItem from '@mui/material/MenuItem';
 // import Menu from '@mui/material/Menu';
 import { useStore } from '../hooks/useStore';
-import styled from 'styled-components';
+import { styled } from "@mui/material/styles";
 
 export const NavigationBar = () => {
-  const { darkMode, setDarkMode } = useStore(state => ({ darkMode: state.darkMode, setDarkMode: state.setDarkMode }));
+  const { darkMode, setDarkMode, winStreak, bestStreak, setModalDetails, textColor } = useStore(state => ({ 
+    darkMode: state.darkMode, 
+    setDarkMode: state.setDarkMode,
+    winStreak: state.winStreak,
+    bestStreak: state.bestStreak,
+    setModalDetails: state.setModalDetails,
+    textColor: state.textColor()
+  }));
   // const [anchorEl, setAnchorEl] = React.useState(null);
-
-  const darkModeText = darkMode ? 'Dark' : 'Light';
-  const textColor = darkMode ? '#EEEEEE' : 'rgba(0, 0, 0, 0.8)';
-  const backgroundColor = darkMode ? 'rgba(0, 0, 0, 0.8)' : '#EEEEEE';
 
   const handleChange = (event) => {
     setDarkMode(event.target.checked);
   };
 
-  // const handleMenu = (event) => {
-  //   setAnchorEl(event.currentTarget);
-  // };
+  const ProfileModalContent = () => {
+    return (
+      <>
+        <div>
+          Current win streak: {winStreak}
+        </div>
+          <div>
+          Best streak: {bestStreak}
+        </div>
+      </>
+    );
+  }
+
+  const handleMenu = () => {
+    // setAnchorEl(event.currentTarget);
+    setModalDetails({
+      title: 'Profile',
+      description: 'Here is your data',
+      show: true,
+      children: <ProfileModalContent />
+    })
+  };
 
   // const handleClose = () => {
   //   setAnchorEl(null);
   // };
 
   return (
-    <Box sx={{ backgroundColor: backgroundColor, flexGrow: 1, textAlign: 'center' }}>
+    <Box sx={{ flexGrow: 1, textAlign: 'center' }}>
       <FormGroup sx={{ ml: '10px', maxWidth: '10%', color: textColor }}>
         <FormControlLabel
           control={
@@ -46,7 +68,7 @@ export const NavigationBar = () => {
               color='warning'
             />
           }
-          label={darkModeText}
+          label={darkMode ? 'Dark' : 'Light'}
         />
       </FormGroup>
       <AppBar position="static" sx={{ backgroundColor: '#417505' }}>
@@ -69,7 +91,7 @@ export const NavigationBar = () => {
               aria-label="account of current user"
               aria-controls="menu-appbar"
               aria-haspopup="true"
-              // onClick={handleMenu}
+              onClick={handleMenu}
               sx={{ color: '#C0C0C0' }}
             >
               <AccountCircle />

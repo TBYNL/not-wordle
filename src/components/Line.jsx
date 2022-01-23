@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { TextField } from '@mui/material'
-import styled from 'styled-components';
+import { styled } from "@mui/material/styles";
 import { useStore } from '../hooks/useStore';
 import keyboardKey from 'keyboard-key';
 
@@ -28,9 +28,8 @@ const Line = ({ onSubmit, previousLineSubmitted, submitted, setSubmitted, word }
   const [letterFive, setLetterFive] = useState('');
 
   const onScreenKeyPressed = useStore(state => state.onScreenKeyPressed);
-  const darkMode = useStore(state => state.darkMode);
-
-  const inputTextColor = darkMode ? 'rgba(0, 0, 0, 0.8)' : '#EEEEEE';
+  const inputTextColor = useStore(state => state.textColor);
+  const bgColor = useStore(state => state.bgColor);
 
   const setNewLetter = (e, setLetter, nextRef, nextLetterSetter) => {
     const letter = e.target.value;
@@ -78,8 +77,8 @@ const Line = ({ onSubmit, previousLineSubmitted, submitted, setSubmitted, word }
     style: { 
       textAlign: 'center',    
       fontSize: '30px',
-      fontWeight: 900
-    }
+      fontWeight: 900,
+    },
   }
 
   const wordChars = [...word].map((char, index) => {
@@ -90,18 +89,18 @@ const Line = ({ onSubmit, previousLineSubmitted, submitted, setSubmitted, word }
   });
 
   const getColour = (letter, position) => {
-    let color = darkMode ? '#EEEEEE' : 'rgba(0, 0, 0, 0.8)';
+    let color = bgColor;
 
     if (word.includes(letter)) {
-      color = '#edb95e';
+      color = 'darkgoldenrod';
 
       if (wordChars.find(char => char.position === position).char === letter) {
-        color = '#82dd55';
+        color = '#417505';
       }
     }
 
     if (!submitted) {
-      color = darkMode ? '#EEEEEE' : 'rgba(0, 0, 0, 0.8)'
+      color = bgColor;
     }
  
      return color;
@@ -141,7 +140,6 @@ const Line = ({ onSubmit, previousLineSubmitted, submitted, setSubmitted, word }
   return (
     <fieldset disabled={submitted || !previousLineSubmitted} style={{ border: 'none' }}>
       <StyledTextField
-        darkMode={darkMode}
         variant="standard"
         inputProps={{ ...inputProps, onKeyDown: e => onKeyDown(e, letterOne, setLetterOne) }}
         value={letterOne}
@@ -151,7 +149,6 @@ const Line = ({ onSubmit, previousLineSubmitted, submitted, setSubmitted, word }
         autoFocus
       />
       <StyledTextField
-        darkMode={darkMode}
         variant="standard"
         inputProps={{ ...inputProps, onKeyDown: e => onKeyDown(e, letterTwo, setLetterTwo, letterOneRef, setLetterOne) }}
         value={letterTwo}
@@ -160,7 +157,6 @@ const Line = ({ onSubmit, previousLineSubmitted, submitted, setSubmitted, word }
         sx={{ input: { color: inputTextColor, backgroundColor: getColour(letterTwo, 2) } }}
       />
       <StyledTextField
-        darkMode={darkMode}
         variant="standard"
         inputProps={{ ...inputProps, onKeyDown: e => onKeyDown(e, letterThree, setLetterThree, letterTwoRef, setLetterTwo) }}
         value={letterThree}
@@ -169,7 +165,6 @@ const Line = ({ onSubmit, previousLineSubmitted, submitted, setSubmitted, word }
         sx={{ input: { color: inputTextColor, backgroundColor: getColour(letterThree, 3) } }}
       />
       <StyledTextField
-        darkMode={darkMode}
         variant="standard"
         inputProps={{ ...inputProps, onKeyDown: e => onKeyDown(e, letterFour, setLetterFour, letterThreeRef, setLetterThree) }}
         value={letterFour}
@@ -178,7 +173,6 @@ const Line = ({ onSubmit, previousLineSubmitted, submitted, setSubmitted, word }
         sx={{ input: { color: inputTextColor, backgroundColor: getColour(letterFour, 4) } }}
       />
       <StyledTextField
-        darkMode={darkMode}
         variant="standard"
         inputProps={{ ...inputProps, onKeyDown: e => onKeyDown(e, letterFive, setLetterFive, letterFourRef, setLetterFour) }}
         value={letterFive}
@@ -192,10 +186,20 @@ const Line = ({ onSubmit, previousLineSubmitted, submitted, setSubmitted, word }
 
 export default Line;
 
-const StyledTextField = styled(({ darkMode, ...props}) => <TextField {...props} />)`
-  width: 50px; 
-  pointer-events: none; 
-  caret-color: transparent;
-  outline: solid ${props => props.darkMode ? '#EEEEEE' : 'rgba(0, 0, 0, 0.8)'} thin;
-  margin: 5px !important;
-`;
+const StyledTextField = styled(TextField, {
+})(() => ({
+  width: '50px',
+  pointerEvents: 'none',
+  caretColor: 'transparent',
+  margin: '5px !important',
+  outline: '1px solid #417505',
+
+  // // input label when focused
+  // "& label.Mui-focused": {
+  //   color: 'red'
+  // },
+  // focused color for input with variant='standard'
+  "& .MuiInput-underline:after": {
+    borderBottomColor: '#417505'
+  }
+}));

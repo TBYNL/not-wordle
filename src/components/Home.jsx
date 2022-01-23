@@ -2,22 +2,14 @@ import React, { useEffect, useState } from 'react';
 import { Words, RandomWord } from '../words'
 import { Keyboard } from './Keyboard/Keyboard';
 import Line from './Line';
-import styled from 'styled-components';
+import { styled } from "@mui/material/styles";
 import { useStore } from '../hooks/useStore';
-import { Modal } from './Modal';
 import { Button } from '@mui/material';
-
-// const getLocalStorageValue = (key) => {
-//   // getting stored value
-//   const saved = localStorage.getItem(key);
-//   const initialValue = JSON.parse(saved);
-//   return initialValue || "";
-// }
 
 const Home = () => {
   const [allWords] = useState(Words);
   const [word] = useState(RandomWord.toUpperCase()) 
-  // const [lettersUsed, setLettersUsed] = useState([]);
+
   const [lineOneSubmitted, setLineOneSubmitted] = useState(false);
   const [lineTwoSubmitted, setLineTwoSubmitted] = useState(false);
   const [lineThreeSubmitted, setLineThreeSubmitted] = useState(false);
@@ -31,9 +23,17 @@ const Home = () => {
 
   const [wordGuessed, setWordGuessed] = useState(false);
   const [totalGuesses, setTotalGuesses] = useState(0);
-  const [showModal, setShowModal] = useState(false);
 
-  const darkMode = useStore(state => state.darkMode);
+  const { bgColor, setModalDetails, winStreak, setWinStreak, bestStreak, setBestStreak } = useStore(state => (
+    { 
+      bgColor: state.bgColor, 
+      setModalDetails: state.setModalDetails,
+      winStreak: state.winStreak,
+      setWinStreak: state.setWinStreak,
+      bestStreak: state.bestStreak,
+      setBestStreak: state.setBestStreak
+    }
+  ));
 
   const setAllLinesSubmitted = () => {
     setLineOneSubmitted(true);
@@ -91,45 +91,47 @@ const Home = () => {
       }
     });
 
+    // is correct
     if (wordGuess === word) {
       setAllLinesSubmitted();
       setWordGuessed(true);
       console.log("Hooray");
-    } else {
-      
-        // const lettersUsedArray = [...lettersUsed, ...letters]
 
-        // setLettersUsed([...new Set(lettersUsedArray)]);
+      const updatedWinStreak = winStreak + 1;
+
+      setWinStreak(updatedWinStreak);
+
+      if (updatedWinStreak > bestStreak) {
+        debugger;
+        setBestStreak(updatedWinStreak);
+      }
+    } else {
         setLineSubmitted(true);
         setCurrentLetterRef(null);
         document.activeElement.blur();
         setTotalGuesses(totalGuesses + 1);
-        // storedValues.submitted = true;
-        // localStorage.setItem(`${id}`, JSON.stringify(storedValues));
     }
   }
 
   const getNewWord = () => {
-    window.location.reload(true);
+    window.location.reload();
   }
-
-  // useEffect(() => {
-  //   setLineOneSubmitted(getLocalStorageValue(1)?.values?.submitted || false);
-  //   setLineOneSubmitted(getLocalStorageValue(2)?.values?.submitted || false);
-  //   setLineOneSubmitted(getLocalStorageValue(3)?.values?.submitted || false);
-  //   setLineOneSubmitted(getLocalStorageValue(4)?.values?.submitted || false);
-  //   setLineOneSubmitted(getLocalStorageValue(5)?.values?.submitted || false);
-  // }, []);
 
   useEffect(() => {
     if (!wordGuessed && totalGuesses === 6) {
-      setShowModal(true);
+      setModalDetails({
+        title: 'Unlucky mate',
+        description: `The word was: ${word}`,
+        show: true,
+        children: <Button variant="contained" onClick={getNewWord}>Get new word</Button>
+      });
+      setWinStreak(0);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [wordGuessed, totalGuesses])
 
   return (
-    <HomeWrapper darkMode={darkMode}>
+    <HomeWrapper bgColor={bgColor}>
       <Line 
         onSubmit={onSubmitLine} 
         previousLineSubmitted={true}
@@ -179,16 +181,16 @@ const Home = () => {
           incorrectLetters={incorrectLetters}
         />
       </div>
-      <Modal showModal={showModal} onClose={() => setShowModal(false)} title="Unlucky mate" description={`The word was {word}`}>
-        <Button variant="contained" onClick={getNewWord}>Get new word</Button>
-      </Modal>
     </HomeWrapper>
   );
 }
 
-const HomeWrapper = styled.div`
-  background-color: ${props => props.darkMode ? 'rgba(0, 0, 0, 0.8)' : '#EEEEEE'}; 
-  text-align: center;
-`
+const HomeWrapper = styled("div", {
+  shouldForwardProp: (props) =>
+    props !== "bgColor"
+  })((p) => ({
+    backgroundColor: p.bgColor,
+    textAlign: 'center'
+}));
 
 export default Home;

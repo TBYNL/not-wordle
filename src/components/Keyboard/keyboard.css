@@ -1,10 +1,10 @@
 :root {
   --light-mode-color: rgba(0, 0, 0, 0.8);
-  --light-mode-bgcolor: #EEEEEE;
+  --light-mode-bgcolor: #C0C0C0;
   --light-mode-active-color: #417505;
   --light-mode-border: rgba(0, 0, 0, 0.8);
 
-  --dark-mode-color: #EEEEEE;
+  --dark-mode-color: #C0C0C0;
   --dark-mode-bgcolor: rgba(0, 0, 0, 0.8);
   --dark-mode-active-color: #ed6c02;
 }
@@ -62,17 +62,17 @@
 
 .simple-keyboard.hg-layout-default .hg-button.hg-red {
   background: #e23636;
-  color: #EEEEEE;
+  color: #C0C0C0;
 }
 
 .simple-keyboard.hg-layout-default .hg-button.hg-green {
-  background: #82dd55;
-  color: #EEEEEE;
+  background: #417505;
+  color: #C0C0C0;
 }
 
 .simple-keyboard.hg-layout-default .hg-button.hg-yellow {
-  background: #edb95e;
-  color: #EEEEEE;
+  background: darkgoldenrod;
+  color: #C0C0C0;
 }
 
 .simple-keyboard.hg-layout-default .hg-button.hg-highlight {
