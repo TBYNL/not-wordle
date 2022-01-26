@@ -52,7 +52,7 @@ export const useStore = create((set, get) => ({
     return { modal: { ...modalDetails }}
   }),
 
-  word: getLocalStorage("word") ? decryptData(getLocalStorage("word"), "NotWordleEncryptionKey") : RandomWord.toUpperCase(),
+  word: getLocalStorage("word") ? decryptData(getLocalStorage("word"), "NotWordleEncryptionKey") : setLocalStorage("word", encryptData(RandomWord.toUpperCase(), "NotWordleEncryptionKey")),
   setWord: (word) => set((state) => {
     setLocalStorage("word", encryptData(word, "NotWordleEncryptionKey"));
     return word;
