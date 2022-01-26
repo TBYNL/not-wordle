@@ -58,30 +58,16 @@ export const NavigationBar = () => {
 
   return (
     <Box sx={{ flexGrow: 1, textAlign: 'center' }}>
-      <FormGroup sx={{ ml: '10px', maxWidth: '10%', color: textColor }}>
-        <FormControlLabel
-          control={
+      <AppBar position="static" sx={{ backgroundColor: '#417505' }}>
+        <Toolbar>
+          <FormGroup sx={{ maxWidth: '10%', color: textColor }}>
             <DarkModeSwitch
               checked={darkMode}
               onChange={handleChange}
               aria-label="login switch"
               color='warning'
             />
-          }
-          label={darkMode ? 'Dark' : 'Light'}
-        />
-      </FormGroup>
-      <AppBar position="static" sx={{ backgroundColor: '#417505' }}>
-        <Toolbar>
-          <IconButton
-            size="large"
-            edge="start"
-            color="inherit"
-            aria-label="menu"
-            sx={{ mr: 2, color: '#C0C0C0' }}
-          >
-            <MenuIcon />
-          </IconButton>
+          </FormGroup>
           <Typography variant="h3" component="div" sx={{ flexGrow: 1, color: textColor }}>
             Not Wordle
           </Typography>
