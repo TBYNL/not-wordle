@@ -1,205 +1,148 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { TextField } from '@mui/material'
-import { styled } from "@mui/material/styles";
-import { useStore } from '../hooks/useStore';
-import keyboardKey from 'keyboard-key';
+import React, { useCallback, useEffect, useState } from "react";
+import styled from "styled-components";
+import { useStore } from "../hooks/useStore";
+import { FadeIn } from "./Animation/FadeIn";
 
-const isLetter = (char) => char.toUpperCase() !== char.toLowerCase() || char.codePointAt(0) > 127;
+const Line = ({
+  id,
+  onSubmit,
+  previousLineSubmitted,
+  submitted,
+  storedGuess,
+  word,
+}) => {
+  const [guess, setGuess] = useState(storedGuess || []);
 
-// const getLocalStorageValue = (key) => {
-//   // getting stored value
-//   const saved = localStorage.getItem(key);
-//   const initialValue = JSON.parse(saved);
-//   return initialValue || "";
-// }
+  const onScreenKeyPressed = useStore((state) => state.onScreenKeyPressed);
+  const inputTextColor = useStore((state) => state.textColor());
 
-const Line = ({ onSubmit, previousLineSubmitted, submitted, setSubmitted, word }) => {
-  const letterOneRef = useRef(null);
-  const letterTwoRef = useRef(null);
-  const letterThreeRef = useRef(null);
-  const letterFourRef = useRef(null);
-  const letterFiveRef = useRef(null);
-  
-  const [currentLetterRef, setCurrentLetterRef] = useState(letterOneRef);
-  const [letterOne, setLetterOne] = useState('');
-  const [letterTwo, setLetterTwo] = useState('');
-  const [letterThree, setLetterThree] = useState('');
-  const [letterFour, setLetterFour] = useState('');
-  const [letterFive, setLetterFive] = useState('');
-
-  const onScreenKeyPressed = useStore(state => state.onScreenKeyPressed);
-  const inputTextColor = useStore(state => state.textColor);
-  const bgColor = useStore(state => state.bgColor);
-
-  const setNewLetter = (e, setLetter, nextRef, nextLetterSetter) => {
-    const letter = e.target.value;
-
-    if (isLetter(letter)) {
-      setLetter(letter.toUpperCase());
-      if (nextRef) {
-        setCurrentLetterRef(nextRef)
-      }
+  const onKeyDown = (e) => {
+    if (submitted || !previousLineSubmitted) {
+      return;
     }
-  }
 
-  const onKeyDown = (e, letter, setLetter, prevRef, setPrevLetter) => {
-    const key = keyboardKey.getCode(e);
-    if (key === 8) {
-      setLetter("");
-      if (letter === '' && prevRef) {
-        setCurrentLetterRef(prevRef)
-
-        if (letter === '' && setPrevLetter) {
-          setPrevLetter("");
-        }
-      }
+    if (["{bksp}", "Backspace"].includes(e.key)) {
+      setGuess((prev) => {
+        const updatedGuess = [...prev];
+        updatedGuess.pop();
+        return updatedGuess;
+      });
     }
-    if (key === 9) {
+    if (e.key === "Tab") {
       e.stopPropagation();
       e.preventDefault();
     }
 
-    if (key === 13) {
-      if (letterOne !== "" && letterTwo !== "" && letterThree !== "" && letterFour !== "" && letterFive !== "") {
-        const letters = [letterOne, letterTwo, letterThree, letterFour, letterFive];
-
-        onSubmit(letters, setSubmitted, setCurrentLetterRef);
+    if (e.key === "Enter") {
+      if (guess.length === 5) {
+        onSubmit(guess, id);
       }
     }
-  } 
 
-  const handleUserKeyPressUnfocused = useCallback((e) => {
-    currentLetterRef?.current?.focus();
-  }, [currentLetterRef]);
-
-  const inputProps = {
-    maxLength: 1, 
-    style: { 
-      textAlign: 'center',    
-      fontSize: '30px',
-      fontWeight: 900,
-    },
-  }
+    if (/^[a-z]$/.test(e.key.toLowerCase()) && guess.length < 5) {
+      setGuess((prev) => [...prev, e.key.toUpperCase()]);
+    }
+  };
 
   const wordChars = [...word].map((char, index) => {
     return {
       char,
-      position: index + 1
-    }
+      position: index,
+    };
   });
 
-  const getColour = (letter, position) => {
-    let color = bgColor;
+  const getBGColor = useCallback(
+    (index) => {
+      let color;
+      if (submitted) {
+        const letter = guess[index];
 
-    if (word.includes(letter)) {
-      color = 'darkgoldenrod';
+        if (word.includes(letter)) {
+          color = "#b8860b";
 
-      if (wordChars.find(char => char.position === position).char === letter) {
-        color = '#417505';
+          if (wordChars.find((char) => char.position === index).char === letter) {
+            color = "#417505";
+          }
+        }
+
+        if (!submitted) {
+          color = "";
+        }
       }
-    }
 
-    if (!submitted) {
-      color = bgColor;
-    }
- 
-     return color;
-  }
+      return color;
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [submitted]
+  );
 
   useEffect(() => {
-    if (currentLetterRef?.current) {
-      currentLetterRef?.current?.focus(); 
-    } else {
-      letterOneRef.current.focus();
+    if (onScreenKeyPressed && !submitted && previousLineSubmitted) {
+      var keyDown = new KeyboardEvent("keydown", {
+        bubbles: true,
+        cancelable: true,
+        key: onScreenKeyPressed,
+      });
+
+      document.activeElement.dispatchEvent(keyDown);
     }
-  }, [currentLetterRef]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [onScreenKeyPressed]);
 
   useEffect(() => {
-    window.addEventListener('keydown', handleUserKeyPressUnfocused);
+    window.addEventListener("keydown", onKeyDown);
 
     return () => {
-      window.removeEventListener('keydown', handleUserKeyPressUnfocused);
+      window.removeEventListener("keydown", onKeyDown);
     };
-  }, [handleUserKeyPressUnfocused]);
-
-  useEffect(() => {
-    if (onScreenKeyPressed && previousLineSubmitted) {
-      if (currentLetterRef?.current) {
-        currentLetterRef?.current?.focus();
-        var keyDown = new KeyboardEvent("keydown", {bubbles: true, cancelable: true, key: onScreenKeyPressed, keyCode: onScreenKeyPressed});
-
-        document.activeElement.dispatchEvent(keyDown);
-
-        // var onChange = new InputEvent("onchange", { target: { value: onScreenKeyPressed } })
-        // document.activeElement.dispatchEvent(onChange);
-      }
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [onScreenKeyPressed])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [guess.length, guess, previousLineSubmitted, submitted]);
 
   return (
-    <fieldset disabled={submitted || !previousLineSubmitted} style={{ border: 'none' }}>
-      <StyledTextField
-        variant="standard"
-        inputProps={{ ...inputProps, onKeyDown: e => onKeyDown(e, letterOne, setLetterOne) }}
-        value={letterOne}
-        onChange={e => setNewLetter(e, setLetterOne, letterTwoRef)} 
-        inputRef={letterOneRef}
-        sx={{ input: { color: inputTextColor, backgroundColor: getColour(letterOne, 1) } }}
-        autoFocus
-      />
-      <StyledTextField
-        variant="standard"
-        inputProps={{ ...inputProps, onKeyDown: e => onKeyDown(e, letterTwo, setLetterTwo, letterOneRef, setLetterOne) }}
-        value={letterTwo}
-        onChange={e => setNewLetter(e, setLetterTwo, letterThreeRef)} 
-        inputRef={letterTwoRef}
-        sx={{ input: { color: inputTextColor, backgroundColor: getColour(letterTwo, 2) } }}
-      />
-      <StyledTextField
-        variant="standard"
-        inputProps={{ ...inputProps, onKeyDown: e => onKeyDown(e, letterThree, setLetterThree, letterTwoRef, setLetterTwo) }}
-        value={letterThree}
-        onChange={e => setNewLetter(e, setLetterThree, letterFourRef)} 
-        inputRef={letterThreeRef}
-        sx={{ input: { color: inputTextColor, backgroundColor: getColour(letterThree, 3) } }}
-      />
-      <StyledTextField
-        variant="standard"
-        inputProps={{ ...inputProps, onKeyDown: e => onKeyDown(e, letterFour, setLetterFour, letterThreeRef, setLetterThree) }}
-        value={letterFour}
-        onChange={e => setNewLetter(e, setLetterFour, letterFiveRef)} 
-        inputRef={letterFourRef}
-        sx={{ input: { color: inputTextColor, backgroundColor: getColour(letterFour, 4) } }}
-      />
-      <StyledTextField
-        variant="standard"
-        inputProps={{ ...inputProps, onKeyDown: e => onKeyDown(e, letterFive, setLetterFive, letterFourRef, setLetterFour) }}
-        value={letterFive}
-        onChange={e => setNewLetter(e, setLetterFive)} 
-        inputRef={letterFiveRef}
-        sx={{ input: { color: inputTextColor, backgroundColor: getColour(letterFive, 5) } }}
-      />
+    <fieldset
+      disabled={submitted || !previousLineSubmitted}
+      style={{
+        border: "none",
+        display: "flex",
+        paddingTop: "2px",
+        paddingBottom: "5px",
+        borderRadius: "10px",
+      }}
+    >
+      {Array.from({ length: 5 }).map((_, i) => (
+        <FadeIn key={i} delay={i * 100}>
+          <Letter hasValue={guess[i]} bgColor={getBGColor(i)} textColor={inputTextColor}>
+            {guess[i] || ""}
+          </Letter>
+        </FadeIn>
+      ))}
     </fieldset>
   );
-}
+};
 
 export default Line;
 
-const StyledTextField = styled(TextField, {
-})(() => ({
-  width: '50px',
-  pointerEvents: 'none',
-  caretColor: 'transparent',
-  margin: '5px !important',
-  outline: '1px solid #417505',
-
-  // // input label when focused
-  // "& label.Mui-focused": {
-  //   color: 'red'
-  // },
-  // focused color for input with variant='standard'
-  "& .MuiInput-underline:after": {
-    borderBottomColor: '#417505'
-  }
+const Letter = styled("span", {
+  shouldForwardProp: (props) => !["bgColor", "textColor", "hasValue"].includes(props),
+})((p) => ({
+  width: "50px",
+  height: "50px",
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+  caretColor: "transparent",
+  margin: "0 2px",
+  border: `2px solid ${p.hasValue ? '#417505' : p.textColor}`,
+  borderRadius: "5px",
+  fontSize: "35px",
+  backgroundColor: p.bgColor,
+  color: p.textColor,
 }));
+
+// const bounceAnimation = keyframes`${fadeIn}`;
+
+// const BouncyDiv = styled.div`
+//   animation: .8s ${bounceAnimation};
+//   animation-delay: ${props => props.delay}s;
+// `;
+

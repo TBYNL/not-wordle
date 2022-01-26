@@ -1,12 +1,23 @@
 import create from 'zustand'
+import { decryptData, encryptData } from '../utils';
+import { RandomWord } from "../words";
 
 const getLocalStorage = (key) => JSON.parse(window.localStorage.getItem(key));
 const setLocalStorage = (key, value) =>
   window.localStorage.setItem(key, JSON.stringify(value));
+const deleteLocalStorage = (key, value) =>
+  window.localStorage.removeItem(key);
 
 export const useStore = create((set, get) => ({
   onScreenKeyPressed: undefined,
   setOnScreenKeyPressed: (key) => set({ onScreenKeyPressed: key }),
+
+  storedGuesses: getLocalStorage("storedGuesses") ?? null,
+  setStoredGuesses: (storedGuesses) => set(() => {
+    setLocalStorage("storedGuesses", storedGuesses);
+    return { storedGuesses }
+  }),
+  deleteStoredGuesses: () => deleteLocalStorage("storedGuesses"),
 
   winStreak: getLocalStorage("winStreak") ?? 0,
   setWinStreak: (winStreak) => set(() => {
@@ -40,4 +51,10 @@ export const useStore = create((set, get) => ({
   setModalDetails: (modalDetails) => set((state) => {
     return { modal: { ...modalDetails }}
   }),
+
+  word: getLocalStorage("word") ? decryptData(getLocalStorage("word"), "NotWordleEncryptionKey") : RandomWord.toUpperCase(),
+  setWord: (word) => set((state) => {
+    setLocalStorage("word", encryptData(word, "NotWordleEncryptionKey"));
+    return word;
+  })
 }))

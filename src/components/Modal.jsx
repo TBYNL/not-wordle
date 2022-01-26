@@ -1,36 +1,69 @@
 import React from 'react';
-import { Modal as MUIModal, Box, Typography } from '@mui/material';
+import { Dialog, DialogContent, DialogActions, Typography, IconButton, DialogTitle } from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
+import { useStore } from '../hooks/useStore';
+import { styled } from '@mui/material/styles';
 
 export const Modal = ({ showModal, onClose, title, description, children }) => {
+  const bgColor = useStore(state => state.bgColor());
+  const textColor = useStore(state => state.textColor);
+
+  const BootstrapDialog = styled(Dialog)(({ theme }) => ({
+    '& .MuiDialogContent-root': {
+      padding: theme.spacing(3),
+    },
+    '& .MuiDialogActions-root': {
+      padding: theme.spacing(1),
+    },
+    // '& .MuiPaper-root': {
+    //   color: textColor  
+    // }
+  }));
   
-  const style = {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    width: 400,
-    bgcolor: 'background.paper',
-    border: '2px solid #000',
-    boxShadow: 24,
-    p: 4,
+  const BootstrapDialogTitle = (props) => {
+    const { children, onClose, ...other } = props;
+  
+    return (
+      <DialogTitle sx={{ m: 0, p: 2}} {...other}>
+        {children}
+        {onClose ? (
+          <IconButton
+            aria-label="close"
+            onClick={onClose}
+            sx={{
+              position: 'absolute',
+              right: 8,
+              top: 8,
+              color: textColor(),
+            }}
+          >
+            <CloseIcon />
+          </IconButton>
+        ) : null}
+      </DialogTitle>
+    );
   };
 
   return (
-    <MUIModal
-      open={showModal}
-      onClose={onClose}
-      aria-labelledby="modal-modal-title"
-      aria-describedby="modal-modal-description"
-    >
-      <Box sx={style}>
-        <Typography id="modal-modal-title" variant="h3" component="h2" sx={{ color: '#e23636'}}>
+    <div>
+      <BootstrapDialog
+        onClose={onClose}
+        aria-labelledby="customized-dialog-title"
+        open={showModal}
+        PaperProps={{ style: { backgroundColor: bgColor, color: textColor() }}}
+      >
+        <BootstrapDialogTitle id="customized-dialog-title" onClose={onClose}>
           {title}
-        </Typography>
-        <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-          {description}
-        </Typography>
-        {children}
-      </Box>
-    </MUIModal>
+        </BootstrapDialogTitle>
+        <DialogContent dividers>
+          <Typography gutterBottom>
+            {description}
+          </Typography>
+        </DialogContent>
+        <DialogActions>
+          {children}
+        </DialogActions>
+      </BootstrapDialog>
+    </div>
   )
 }

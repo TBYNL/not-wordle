@@ -13,7 +13,6 @@ function App() {
     document.body.style.backgroundColor = bgColor;
   }, [bgColor]);
 
-  debugger;
   return (
     <>
       <NavigationBar />
