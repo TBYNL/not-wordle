@@ -60,6 +60,10 @@
   background: #1c4995;
 } */
 
+.hg-theme-default.myTheme1.hg-layout-default {
+  display: contents;
+}
+
 .simple-keyboard.hg-layout-default .hg-button.hg-red {
   background: #e23636;
   color: #C0C0C0;
@@ -78,4 +82,8 @@
 .simple-keyboard.hg-layout-default .hg-button.hg-highlight {
   box-shadow: 0px 0px 40px 5px rgba(255, 255, 0, 0.5);
   z-index: 1;
+}
+
+.hg-theme-default .hg-row .hg-button:not(:last-child) {
+  margin-right: 5px;
 }

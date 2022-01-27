@@ -203,13 +203,13 @@ const Home = () => {
           </FadeIn>
         ))}
       </HomeWrapper>
-      <KeyboardWrapper>
+      <div>
         <Keyboard
           correctLetters={correctLetters}
           outOfPositionLetters={outOfPositionLetters}
           incorrectLetters={incorrectLetters}
         />
-      </KeyboardWrapper>
+      </div>
     </>
   );
 };
