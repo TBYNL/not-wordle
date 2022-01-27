@@ -5,7 +5,6 @@ import Line from "./Line";
 import styled from "styled-components";
 import { useStore } from "../hooks/useStore";
 import { Button } from "@mui/material";
-import { FadeIn } from "./Animation/FadeIn";
 
 const Home = () => {
   const {
@@ -33,7 +32,7 @@ const Home = () => {
     setStoredGuesses: state.setStoredGuesses,
     deleteStoredGuesses: state.deleteStoredGuesses,
   }));
-debugger;
+
   const numberOfGuesses = 6;
 
   const getBlankGuesses = (totalGuesses) => {
@@ -186,15 +185,14 @@ debugger;
     <>
       <HomeWrapper bgColor={bgColor}>
         {Array.from({ length: numberOfGuesses }).map((_, i) => (
-          <FadeIn key={i} delay={i * 400}>
-            <Line
-              id={i}
-              onSubmit={onSubmitLine}
-              previousLineSubmitted={guesses[i].previousLineSubmitted}
-              submitted={guesses[i].submitted}
-              storedGuess={guesses[i].values}
-            />
-          </FadeIn>
+          <Line
+            key={i}
+            id={i}
+            onSubmit={onSubmitLine}
+            previousLineSubmitted={guesses[i].previousLineSubmitted}
+            submitted={guesses[i].submitted}
+            storedGuess={guesses[i].values}
+          />
         ))}
       </HomeWrapper>
       <KeyboardWrapper>

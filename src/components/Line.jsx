@@ -2,8 +2,8 @@ import React, { useCallback, useEffect, useState } from "react";
 import styled from "styled-components";
 import { Words } from "../words";
 import { useStore } from "../hooks/useStore";
-import { FadeIn } from "./Animation/FadeIn";
 import { Shake } from "./Animation/Shake";
+import { Flip } from "./Animation/Flip";
 
 const Line = ({
   id,
@@ -144,8 +144,8 @@ const Line = ({
       }}
     >
       {Array.from({ length: 5 }).map((_, i) => (
-        <FadeIn key={i} delay={i * 100}>
-          <Shake animate={invalidWord}>
+        <Shake key={i} animate={invalidWord}>
+          <Flip delay={i * 300} animate={submitted}>
             <Letter
               borderColor={getBorderColor(guess[i])}
               bgColor={getBGColor(i)}
@@ -153,8 +153,8 @@ const Line = ({
             >
               {guess[i] || ""}
             </Letter>
-          </Shake>
-        </FadeIn>
+          </Flip>
+        </Shake>
       ))}
     </fieldset>
   );

@@ -47,7 +47,7 @@ export const NavigationBar = () => {
   };
 
   return (
-    <Box sx={{ flexGrow: 1, textAlign: 'center' }}>
+    <Box sx={{ flexGrow: 1, textAlign: 'center', fontFamily: 'Bebas Neue' }}>
       <AppBar position="static" sx={{ backgroundColor: '#417505' }}>
         <Toolbar>
           <FormGroup sx={{ maxWidth: '10%', color: textColor }}>
