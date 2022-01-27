@@ -4,7 +4,6 @@ import { Words } from "../words";
 import { useStore } from "../hooks/useStore";
 import { FadeIn } from "./Animation/FadeIn";
 import { Shake } from "./Animation/Shake";
-import shallow from 'zustand/shallow';
 
 const Line = ({
   id,
