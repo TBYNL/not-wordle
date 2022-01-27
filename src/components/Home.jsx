@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Words, RandomWord } from "../words";
+import { RandomWord } from "../words";
 import { Keyboard } from "./Keyboard/Keyboard";
 import Line from "./Line";
 import styled from "styled-components";
@@ -21,7 +21,7 @@ const Home = () => {
     setStoredGuesses,
     deleteStoredGuesses,
   } = useStore((state) => ({
-    word: state.word,
+    word: state.word(),
     setWord: state.setWord,
     bgColor: state.bgColor,
     setModalDetails: state.setModalDetails,
@@ -33,8 +33,7 @@ const Home = () => {
     setStoredGuesses: state.setStoredGuesses,
     deleteStoredGuesses: state.deleteStoredGuesses,
   }));
-
-  const [allWords] = useState(Words);
+debugger;
   const numberOfGuesses = 6;
 
   const getBlankGuesses = (totalGuesses) => {
@@ -123,10 +122,6 @@ const Home = () => {
   const onSubmitLine = (letters, id) => {
     let wordGuess = letters.join("");
 
-    if (!allWords.includes(wordGuess.toLowerCase())) {
-      return;
-    }
-
     updateGuesses(letters, id);
     setLetterStates(letters);
 
@@ -198,21 +193,25 @@ const Home = () => {
               previousLineSubmitted={guesses[i].previousLineSubmitted}
               submitted={guesses[i].submitted}
               storedGuess={guesses[i].values}
-              word={word}
             />
           </FadeIn>
         ))}
       </HomeWrapper>
-      <div>
+      <KeyboardWrapper>
         <Keyboard
           correctLetters={correctLetters}
           outOfPositionLetters={outOfPositionLetters}
           incorrectLetters={incorrectLetters}
         />
-      </div>
+      </KeyboardWrapper>
     </>
   );
 };
+
+const KeyboardWrapper = styled.div`
+  width: 98%;
+  margin: auto;
+`
 
 const HomeWrapper = styled("div", {
   shouldForwardProp: (props) => props !== "bgColor",

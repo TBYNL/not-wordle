@@ -2,6 +2,8 @@ import create from 'zustand'
 import { decryptData, encryptData } from '../utils';
 import { RandomWord } from "../words";
 
+const encryptionKey = "NotWordleEncryptionKey";
+
 const getLocalStorage = (key) => JSON.parse(window.localStorage.getItem(key));
 const setLocalStorage = (key, value) =>
   window.localStorage.setItem(key, JSON.stringify(value));
@@ -59,7 +61,16 @@ export const useStore = create((set, get) => ({
     return { modal: { ...modalDetails }}
   }),
 
-  word: getLocalStorage("word") ? decryptData(getLocalStorage("word"), "NotWordleEncryptionKey") : setLocalStorage("word", encryptData(RandomWord.toUpperCase(), "NotWordleEncryptionKey")),
+  word: () => {
+    if (getLocalStorage("word")) {
+      return decryptData(getLocalStorage("word"), encryptionKey);
+    }
+    
+    const newWord = RandomWord.toUpperCase();
+
+    setLocalStorage("word", encryptData(newWord, "NotWordleEncryptionKey"));
+    return newWord;
+  },
   setWord: (word) => set((state) => {
     setLocalStorage("word", encryptData(word, "NotWordleEncryptionKey"));
     return word;

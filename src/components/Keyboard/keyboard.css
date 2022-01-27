@@ -35,9 +35,18 @@
   align-items: center;
 }
 
-.simple-keyboard.myTheme1 .hg-button.dark {
+.hg-button.dark {
   background: var(--dark-mode-bgcolor);
   color: var(--dark-mode-color);
+}
+
+.hg-button.dark[data-skbtn="Enter"],
+.hg-button.dark[data-skbtn="{bksp}"],
+.hg-button.light[data-skbtn="Enter"],
+.hg-button.light[data-skbtn="{bksp}"]
+ {
+  width: 12%;
+  max-width: none;
 }
 
 .simple-keyboard.myTheme1 .hg-button.light {
@@ -84,6 +93,6 @@
   z-index: 1;
 }
 
-.hg-theme-default .hg-row .hg-button:not(:last-child) {
+/* .hg-theme-default .hg-row .hg-button:not(:last-child) {
   margin-right: 5px;
-}
+} */

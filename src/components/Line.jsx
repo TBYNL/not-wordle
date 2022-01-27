@@ -1,7 +1,10 @@
 import React, { useCallback, useEffect, useState } from "react";
 import styled from "styled-components";
+import { Words } from "../words";
 import { useStore } from "../hooks/useStore";
 import { FadeIn } from "./Animation/FadeIn";
+import { Shake } from "./Animation/Shake";
+import shallow from 'zustand/shallow';
 
 const Line = ({
   id,
@@ -9,12 +12,17 @@ const Line = ({
   previousLineSubmitted,
   submitted,
   storedGuess,
-  word,
 }) => {
+  const [allWords] = useState(Words);
+  const [invalidWord, setInvalidWord] = useState(false);
+
   const [guess, setGuess] = useState(storedGuess || []);
+
+  const word = useStore((state) => state.word());
 
   const onScreenKeyPressed = useStore((state) => state.onScreenKeyPressed);
   const inputTextColor = useStore((state) => state.textColor());
+  const darkMode = useStore((state) => state.darkMode);
 
   const onKeyDown = (e) => {
     if (submitted || !previousLineSubmitted) {
@@ -34,9 +42,15 @@ const Line = ({
     }
 
     if (e.key === "Enter") {
-      if (guess.length === 5) {
-        onSubmit(guess, id);
+      let wordGuess = guess.join("");
+
+      if (!allWords.includes(wordGuess.toLowerCase()) || guess.length < 5) {
+        setInvalidWord(true);
+        return;
       }
+
+      setInvalidWord(false);
+      onSubmit(guess, id);
     }
 
     if (/^[a-z]$/.test(e.key.toLowerCase()) && guess.length < 5) {
@@ -60,7 +74,9 @@ const Line = ({
         if (word.includes(letter)) {
           color = "#b8860b";
 
-          if (wordChars.find((char) => char.position === index).char === letter) {
+          if (
+            wordChars.find((char) => char.position === index).char === letter
+          ) {
             color = "#417505";
           }
         }
@@ -76,6 +92,16 @@ const Line = ({
     [submitted]
   );
 
+  const getBorderColor = useCallback((value) => {
+    if (invalidWord) {
+      return "#e23636";
+    }
+
+    return value !== undefined ? "#417505" : inputTextColor;
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [darkMode, invalidWord]);
+
   useEffect(() => {
     if (onScreenKeyPressed && !submitted && previousLineSubmitted) {
       var keyDown = new KeyboardEvent("keydown", {
@@ -88,6 +114,15 @@ const Line = ({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [onScreenKeyPressed]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (invalidWord) {
+        setInvalidWord(false);
+      }
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [invalidWord]);
 
   useEffect(() => {
     window.addEventListener("keydown", onKeyDown);
@@ -111,9 +146,15 @@ const Line = ({
     >
       {Array.from({ length: 5 }).map((_, i) => (
         <FadeIn key={i} delay={i * 100}>
-          <Letter hasValue={guess[i]} bgColor={getBGColor(i)} textColor={inputTextColor}>
-            {guess[i] || ""}
-          </Letter>
+          <Shake animate={invalidWord}>
+            <Letter
+              borderColor={getBorderColor(guess[i])}
+              bgColor={getBGColor(i)}
+              textColor={inputTextColor}
+            >
+              {guess[i] || ""}
+            </Letter>
+          </Shake>
         </FadeIn>
       ))}
     </fieldset>
@@ -123,7 +164,8 @@ const Line = ({
 export default Line;
 
 const Letter = styled("span", {
-  shouldForwardProp: (props) => !["bgColor", "textColor", "hasValue"].includes(props),
+  shouldForwardProp: (props) =>
+    !["bgColor", "textColor", "borderColor", "shake"].includes(props),
 })((p) => ({
   width: "50px",
   height: "50px",
@@ -132,7 +174,7 @@ const Letter = styled("span", {
   alignItems: "center",
   caretColor: "transparent",
   margin: "0 2px",
-  border: `2px solid ${p.hasValue ? '#417505' : p.textColor}`,
+  border: `2px solid ${p.borderColor}`,
   borderRadius: "5px",
   fontSize: "35px",
   backgroundColor: p.bgColor,
@@ -145,4 +187,3 @@ const Letter = styled("span", {
 //   animation: .8s ${bounceAnimation};
 //   animation-delay: ${props => props.delay}s;
 // `;
-

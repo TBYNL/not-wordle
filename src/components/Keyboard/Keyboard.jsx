@@ -13,6 +13,7 @@ export const Keyboard = ({ correctLetters, outOfPositionLetters, incorrectLetter
   const onKeyPress = button => {
     setOnScreenKeyPressed(button);
 
+    // reset value in store so other components recognise change
     const timer = setTimeout(() => {
       setOnScreenKeyPressed('');
     }, 100);
@@ -34,6 +35,7 @@ export const Keyboard = ({ correctLetters, outOfPositionLetters, incorrectLetter
       }}
       display={{
         "{bksp}": "⌫",
+        // "Enter": "⏎"
       }}
       buttonTheme={[
         { 
