@@ -214,15 +214,6 @@ const Home = () => {
   );
 };
 
-const KeyboardWrapper = styled(
-  "div",
-  {}
-)((p) => ({
-  display: "flex",
-  justifyContent: "center",
-  width: "100vw",
-}));
-
 const HomeWrapper = styled("div", {
   shouldForwardProp: (props) => props !== "bgColor",
 })((p) => ({
