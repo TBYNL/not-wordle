@@ -19,6 +19,13 @@ export const useStore = create((set, get) => ({
   }),
   deleteStoredGuesses: () => deleteLocalStorage("storedGuesses"),
 
+  // correctLetters:, 
+  // setCorrectLetters
+  // outOfPositionLetters
+  // setOutOfPositionLetters
+  // incorrectLetters
+  // setIncorrectLetters
+
   winStreak: getLocalStorage("winStreak") ?? 0,
   setWinStreak: (winStreak) => set(() => {
     setLocalStorage("winStreak", winStreak);

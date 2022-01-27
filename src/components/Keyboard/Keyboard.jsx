@@ -4,7 +4,7 @@ import "react-simple-keyboard/build/css/index.css";
 import { useStore } from "../../hooks/useStore";
 import "./keyboard.css";
 
-export const Keyboard = ({ correctLetters, outOfPositionLetters, incorrectLetters}) => {
+export const Keyboard = ({ correctLetters, outOfPositionLetters, incorrectLetters }) => {
   const layoutName = "default";
   const keyboard = useRef();
   const setOnScreenKeyPressed = useStore(state => state.setOnScreenKeyPressed);
@@ -17,7 +17,7 @@ export const Keyboard = ({ correctLetters, outOfPositionLetters, incorrectLetter
       setOnScreenKeyPressed('');
     }, 100);
     return () => clearTimeout(timer);
-  };
+  }
 
   return (
     <SimpleKeyboard

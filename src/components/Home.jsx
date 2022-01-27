@@ -77,17 +77,10 @@ const Home = () => {
     setStoredGuesses([...updatedGuesses]);
   };
 
-  const onSubmitLine = (letters, id) => {
-    let wordGuess = letters.join("");
+  const setLetterStates = (letters) => {
     let updatedCorrectLetters = correctLetters;
     let updatedIncorrectLetters = incorrectLetters;
     let updatedOutOfPositionLetters = outOfPositionLetters;
-
-    if (!allWords.includes(wordGuess.toLowerCase())) {
-      return;
-    }
-
-    updateGuesses(letters, id);
 
     const wordChars = [...word].map((char, index) => {
       return {
@@ -125,6 +118,17 @@ const Home = () => {
         setIncorrectLetters(updatedIncorrectLetters);
       }
     });
+  }
+
+  const onSubmitLine = (letters, id) => {
+    let wordGuess = letters.join("");
+
+    if (!allWords.includes(wordGuess.toLowerCase())) {
+      return;
+    }
+
+    updateGuesses(letters, id);
+    setLetterStates(letters);
 
     // is correct
     if (wordGuess === word) {

@@ -7,8 +7,6 @@ import IconButton from '@mui/material/IconButton';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import Switch from '@mui/material/Switch';
 import FormGroup from '@mui/material/FormGroup';
-// import MenuItem from '@mui/material/MenuItem';
-// import Menu from '@mui/material/Menu';
 import { useStore } from '../hooks/useStore';
 import { styled } from "@mui/material/styles";
 
@@ -21,7 +19,6 @@ export const NavigationBar = () => {
     setModalDetails: state.setModalDetails,
     textColor: state.textColor()
   }));
-  // const [anchorEl, setAnchorEl] = React.useState(null);
 
   const handleChange = (event) => {
     setDarkMode(event.target.checked);
@@ -41,7 +38,6 @@ export const NavigationBar = () => {
   }
 
   const handleMenu = () => {
-    // setAnchorEl(event.currentTarget);
     setModalDetails({
       title: 'Profile',
       description: 'Here is your data',
@@ -49,10 +45,6 @@ export const NavigationBar = () => {
       children: <ProfileModalContent />
     })
   };
-
-  // const handleClose = () => {
-  //   setAnchorEl(null);
-  // };
 
   return (
     <Box sx={{ flexGrow: 1, textAlign: 'center' }}>
@@ -66,8 +58,8 @@ export const NavigationBar = () => {
               color='warning'
             />
           </FormGroup>
-          <Typography variant="h3" component="div" sx={{ flexGrow: 1, color: textColor }}>
-            Not Wordle
+          <Typography variant="h4" component="div" sx={{ flexGrow: 1, color: textColor }}>
+            !Wordle
           </Typography>
           <div>
             <IconButton
@@ -80,24 +72,6 @@ export const NavigationBar = () => {
             >
               <AccountCircle />
             </IconButton>
-            {/* <Menu
-              id="menu-appbar"
-              anchorEl={anchorEl}
-              anchorOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-              }}
-              keepMounted
-              transformOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-              }}
-              open={Boolean(anchorEl)}
-              onClose={handleClose}
-            >
-              <MenuItem onClick={handleClose}>Profile</MenuItem>
-              <MenuItem onClick={handleClose}>My account</MenuItem>
-            </Menu> */}
           </div>
         </Toolbar>
       </AppBar>
