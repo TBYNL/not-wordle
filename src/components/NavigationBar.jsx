@@ -9,11 +9,16 @@ import Switch from '@mui/material/Switch';
 import FormGroup from '@mui/material/FormGroup';
 import { useStore } from '../hooks/useStore';
 import { styled } from "@mui/material/styles";
+import Divider from "@mui/material/Divider";
+import Paper from "@mui/material/Paper";
+import Stack from "@mui/material/Stack";
 
 export const NavigationBar = () => {
-  const { darkMode, setDarkMode, winStreak, bestStreak, setModalDetails, textColor } = useStore(state => ({ 
+  const { darkMode, setDarkMode, gamesPlayed, gamesWon, winStreak, bestStreak, setModalDetails, textColor } = useStore(state => ({ 
     darkMode: state.darkMode, 
     setDarkMode: state.setDarkMode,
+    gamesPlayed: state.gamesPlayed,
+    gamesWon: state.gamesWon,
     winStreak: state.winStreak,
     bestStreak: state.bestStreak,
     setModalDetails: state.setModalDetails,
@@ -24,23 +29,52 @@ export const NavigationBar = () => {
     setDarkMode(event.target.checked);
   };
 
+  const getWinPercentage = () => {
+    if(gamesPlayed && gamesPlayed > 0) {
+      if (gamesWon && gamesWon > 0) {
+        return Math.round(gamesWon / gamesPlayed * 100)
+      }
+    } else {
+      return 0
+    }
+    
+  }
+
   const ProfileModalContent = () => {
     return (
-      <>
-        <div>
-          Current win streak: {winStreak}
-        </div>
-          <div>
-          Best streak: {bestStreak}
-        </div>
-      </>
+      <Stack
+        direction="row"
+        divider={<Divider orientation="vertical" flexItem />}
+        spacing={1}
+      >
+        <Item>
+          <h2>{gamesPlayed || 0}</h2>
+          Played
+        </Item>
+        <Item>
+          <h2>{gamesWon || 0}</h2>
+          Wins
+        </Item>
+        <Item>
+          <h2>{winStreak || 0}</h2>
+          Current Streak
+        </Item>
+        <Item>
+          <h2>{bestStreak || 0}</h2>
+          Best streak
+        </Item>
+        <Item>
+          <h2>{getWinPercentage()}%</h2>
+          Win %
+        </Item>
+      </Stack>
     );
   }
 
   const handleMenu = () => {
     setModalDetails({
-      title: 'Profile',
-      description: 'Here is your data',
+      title: 'Statistics',
+      content: <ProfileModalContent />,
       show: true,
       children: <ProfileModalContent />
     })
@@ -121,4 +155,12 @@ const DarkModeSwitch = styled(Switch)(({ darkMode }) => ({
     backgroundColor: darkMode ? '#8796A5' : '#aab4be',
     borderRadius: 20 / 2,
   },
+}));
+
+const Item = styled(Paper)(({ theme }) => ({
+  ...theme.typography.body2,
+  padding: theme.spacing(1),
+  textAlign: "center",
+  color: theme.palette.text.secondary,
+  minWidth: '50px'
 }));

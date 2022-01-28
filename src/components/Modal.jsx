@@ -4,13 +4,14 @@ import CloseIcon from '@mui/icons-material/Close';
 import { useStore } from '../hooks/useStore';
 import { styled } from '@mui/material/styles';
 
-export const Modal = ({ showModal, onClose, title, description, children }) => {
+export const Modal = ({ showModal, onClose, title, description, content, children }) => {
   const bgColor = useStore(state => state.bgColor());
   const textColor = useStore(state => state.textColor);
 
   const BootstrapDialog = styled(Dialog)(({ theme }) => ({
     '& .MuiDialogContent-root': {
       padding: theme.spacing(3),
+      borderColor: 'grey'
     },
     '& .MuiDialogActions-root': {
       padding: theme.spacing(1),
@@ -59,10 +60,13 @@ export const Modal = ({ showModal, onClose, title, description, children }) => {
           <Typography gutterBottom>
             {description}
           </Typography>
+          <DialogActions>
+            {children}
+          </DialogActions>
         </DialogContent>
-        <DialogActions>
-          {children}
-        </DialogActions>
+          {/* <DialogActions>
+            {children}
+          </DialogActions> */}
       </BootstrapDialog>
     </div>
   )

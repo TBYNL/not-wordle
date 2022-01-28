@@ -12,6 +12,10 @@ const Home = () => {
     setWord,
     bgColor,
     setModalDetails,
+    gamesPlayed,
+    setGamesPlayed,
+    gamesWon,
+    setGamesWon,
     winStreak,
     setWinStreak,
     bestStreak,
@@ -24,6 +28,10 @@ const Home = () => {
     setWord: state.setWord,
     bgColor: state.bgColor,
     setModalDetails: state.setModalDetails,
+    gamesPlayed: state.gamesPlayed,
+    setGamesPlayed: state.setGamesPlayed,
+    gamesWon: state.gamesWon,
+    setGamesWon: state.setGamesWon,
     winStreak: state.winStreak,
     setWinStreak: state.setWinStreak,
     bestStreak: state.bestStreak,
@@ -52,7 +60,7 @@ const Home = () => {
   const [outOfPositionLetters, setOutOfPositionLetters] = useState([]);
   const [incorrectLetters, setIncorrectLetters] = useState([]);
 
-  const [wordGuessed, setWordGuessed] = useState(false);
+  const [wordGuessed, setWordGuessed] = useState(guesses?.some(guess => guess.values.join("") === word) || false);
   const [totalSubmittedGuesses, setTotalSubmittedGuesses] = useState(
     guesses.filter((guess) => guess.submitted).length
   );
@@ -116,7 +124,7 @@ const Home = () => {
         setIncorrectLetters(updatedIncorrectLetters);
       }
     });
-  }
+  };
 
   const onSubmitLine = (letters, id) => {
     let wordGuess = letters.join("");
@@ -127,27 +135,12 @@ const Home = () => {
     // is correct
     if (wordGuess === word) {
       setWordGuessed(true);
-
-      setModalDetails({
-        title: "Congrats",
-        description: `The word was: ${word}`,
-        show: true,
-        children: (
-          <Button color="success" variant="outlined" onClick={getNewWord}>
-            Get New Word
-          </Button>
-        ),
-      });
-
-      const updatedWinStreak = winStreak + 1;
-
-      setWinStreak(updatedWinStreak);
-
-      if (updatedWinStreak > bestStreak) {
-        setBestStreak(updatedWinStreak);
-      }
     } else {
       setTotalSubmittedGuesses(totalSubmittedGuesses + 1);
+    }
+    
+    if (wordGuess === word || totalSubmittedGuesses + 1 === numberOfGuesses) {
+      setGamesPlayed(gamesPlayed + 1);
     }
   };
 
@@ -166,20 +159,62 @@ const Home = () => {
 
   useEffect(() => {
     if (!wordGuessed && totalSubmittedGuesses === numberOfGuesses) {
-      setModalDetails({
-        title: "Unlucky mate",
-        description: `The word was: ${word}`,
-        show: true,
-        children: (
-          <Button color="error" variant="outlined" autoFocus onClick={getNewWord}>
-            Get New Word
-          </Button>
-        ),
-      });
-      setWinStreak(0);
+      const timer = setTimeout(() => {
+        setModalDetails({
+          title: "Unlucky mate",
+          description: `The word was: ${word}`,
+          show: true,
+          children: (
+            <Button
+              color="error"
+              variant="outlined"
+              autoFocus
+              onClick={getNewWord}
+            >
+              Get New Word
+            </Button>
+          ),
+        });
+        setWinStreak(0);
+      }, 2000);
+      return () => clearTimeout(timer);
+    }
+
+    if (wordGuessed) {
+      const timer = setTimeout(() => {
+        const updatedWinStreak = winStreak + 1;
+
+        setWinStreak(updatedWinStreak);
+        setGamesWon(gamesWon + 1);
+  
+        if (updatedWinStreak > bestStreak) {
+          setBestStreak(updatedWinStreak);
+        }
+
+        setModalDetails({
+          title: "Congrats",
+          description: `The word was: ${word}`,
+          show: true,
+          children: (
+            <Button color="success" variant="outlined" onClick={getNewWord}>
+              Get New Word
+            </Button>
+          ),
+        });
+      }, 2000);
+      return () => clearTimeout(timer);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [wordGuessed, totalSubmittedGuesses]);
+
+  // useEffect(() => {
+  //   fetch("https://ya5el36y0f.execute-api.us-west-2.amazonaws.com/staging")
+  //     .then((res) => res.json())
+  //     .then((json) => {
+  //       const t = JSON.parse(json.body);
+  //       debugger;
+  //     });
+  // }, []);
 
   return (
     <>
@@ -209,7 +244,7 @@ const Home = () => {
 const KeyboardWrapper = styled.div`
   width: 98%;
   margin: auto;
-`
+`;
 
 const HomeWrapper = styled("div", {
   shouldForwardProp: (props) => props !== "bgColor",

@@ -28,6 +28,18 @@ export const useStore = create((set, get) => ({
   // incorrectLetters
   // setIncorrectLetters
 
+  gamesPlayed: getLocalStorage("gamesPlayed") ?? 0,
+  setGamesPlayed: (gamesPlayed) => set(() => {
+    setLocalStorage("gamesPlayed", gamesPlayed);
+    return { gamesPlayed }
+  }),
+
+  gamesWon: getLocalStorage("gamesWon") ?? 0,
+  setGamesWon: (gamesWon) => set(() => {
+    setLocalStorage("gamesWon", gamesWon);
+    return { gamesWon }
+  }),
+
   winStreak: getLocalStorage("winStreak") ?? 0,
   setWinStreak: (winStreak) => set(() => {
     setLocalStorage("winStreak", winStreak);
