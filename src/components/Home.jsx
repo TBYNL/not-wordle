@@ -176,7 +176,7 @@ const Home = () => {
           ),
         });
         setWinStreak(0);
-      }, 2000);
+      }, 1200);
       return () => clearTimeout(timer);
     }
 
@@ -201,7 +201,7 @@ const Home = () => {
             </Button>
           ),
         });
-      }, 2000);
+      }, 1200);
       return () => clearTimeout(timer);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

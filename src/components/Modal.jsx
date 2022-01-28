@@ -60,7 +60,7 @@ export const Modal = ({ showModal, onClose, title, description, content, childre
           <Typography gutterBottom>
             {description}
           </Typography>
-          <DialogActions>
+          <DialogActions sx={{ display: 'inline-flex'}}>
             {children}
           </DialogActions>
         </DialogContent>
