@@ -12,6 +12,7 @@ import { styled } from "@mui/material/styles";
 import Divider from "@mui/material/Divider";
 import Paper from "@mui/material/Paper";
 import Stack from "@mui/material/Stack";
+import Grid from "@mui/material/Grid";
 
 export const NavigationBar = () => {
   const { darkMode, setDarkMode, gamesPlayed, gamesWon, winStreak, bestStreak, setModalDetails, textColor } = useStore(state => ({ 
@@ -22,7 +23,7 @@ export const NavigationBar = () => {
     winStreak: state.winStreak,
     bestStreak: state.bestStreak,
     setModalDetails: state.setModalDetails,
-    textColor: state.textColor()
+    textColor: state.getTextColor
   }));
 
   const handleChange = (event) => {
@@ -42,32 +43,59 @@ export const NavigationBar = () => {
 
   const ProfileModalContent = () => {
     return (
-      <Stack
-        direction="row"
-        divider={<Divider orientation="vertical" flexItem />}
-        spacing={1}
-      >
-        <Item>
-          <h2>{gamesPlayed || 0}</h2>
-          Played
-        </Item>
-        <Item>
-          <h2>{gamesWon || 0}</h2>
-          Wins
-        </Item>
-        <Item>
-          <h2>{winStreak || 0}</h2>
-          Current Streak
-        </Item>
-        <Item>
-          <h2>{bestStreak || 0}</h2>
-          Best streak
-        </Item>
-        <Item>
-          <h2>{getWinPercentage()}%</h2>
-          Win %
-        </Item>
-      </Stack>
+      <div>
+        {/* <Stack
+          direction="row"
+          divider={<Divider orientation="vertical" flexItem />}
+          spacing={0.5}
+        > */}
+        <Grid container spacing={2}>
+          <Grid item xs={4}>
+            <Item>
+              <h2>{gamesPlayed || 0}</h2>
+              Played
+            </Item>
+          </Grid>
+          <Grid item xs={4}>
+            <Item>
+              <h2>{gamesWon || 0}</h2>
+              Wins
+            </Item>
+          </Grid>
+          <Grid item xs={4}>
+            <Item>
+              <h2>{getWinPercentage()}%</h2>
+              Win %
+            </Item>
+          </Grid>
+          <Grid item xs={6}>
+            <Item>
+              <h2>{winStreak || 0}</h2>
+              Current Streak
+            </Item>
+          </Grid>
+          <Grid item xs={6}>
+            <Item>
+            <h2>{bestStreak || 0}</h2>
+            Best streak
+            </Item>
+          </Grid>
+        </Grid>
+        {/* <Stack
+          direction="row"
+          divider={<Divider orientation="vertical" flexItem />}
+          spacing={0.5}
+        >
+          <Item>
+            <h2>{winStreak || 0}</h2>
+            Current Streak
+          </Item>
+          <Item>
+            <h2>{bestStreak || 0}</h2>
+            Best streak
+          </Item>
+        </Stack> */}
+      </div>
     );
   }
 
@@ -162,5 +190,6 @@ const Item = styled(Paper)(({ theme }) => ({
   padding: theme.spacing(1),
   textAlign: "center",
   color: theme.palette.text.secondary,
-  minWidth: '50px'
+  minWidth: '50px',
+  display: 'block'
 }));

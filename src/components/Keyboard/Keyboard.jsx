@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { default as SimpleKeyboard } from "react-simple-keyboard";
 import "react-simple-keyboard/build/css/index.css";
 import { useStore } from "../../hooks/useStore";
@@ -10,6 +10,10 @@ export const Keyboard = ({ correctLetters, outOfPositionLetters, incorrectLetter
   const setOnScreenKeyPressed = useStore(state => state.setOnScreenKeyPressed);
   const darkMode = useStore(state => state.darkMode ? "dark" : "light");
 
+  const [cLetters, setCorrectLetters] = useState([...correctLetters]);
+  const [oopLetters, setOOPLetters] = useState([...outOfPositionLetters]);
+  const [iLetters, setIncorrectLetters] = useState([...incorrectLetters]);
+
   const onKeyPress = button => {
     setOnScreenKeyPressed(button);
 
@@ -19,6 +23,13 @@ export const Keyboard = ({ correctLetters, outOfPositionLetters, incorrectLetter
     }, 100);
     return () => clearTimeout(timer);
   }
+
+  useEffect(() => {
+    setCorrectLetters(correctLetters);
+    setOOPLetters(outOfPositionLetters);
+    setIncorrectLetters(incorrectLetters);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [correctLetters, incorrectLetters, outOfPositionLetters])
 
   return (
     <SimpleKeyboard
@@ -44,15 +55,15 @@ export const Keyboard = ({ correctLetters, outOfPositionLetters, incorrectLetter
         },
         {
           class: "hg-red",
-          buttons: ` ${incorrectLetters.join(" ")}`
+          buttons: ` ${iLetters.join(" ")}`
         },
         {
           class: "hg-yellow",
-          buttons: ` ${outOfPositionLetters.join(" ")}`
+          buttons: ` ${oopLetters.join(" ")}`
         },
         {
           class: "hg-green",
-          buttons: ` ${correctLetters.join(" ")}`
+          buttons: ` ${cLetters.join(" ")}`
         }
       ]}
     />

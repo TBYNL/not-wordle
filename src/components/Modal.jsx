@@ -5,8 +5,8 @@ import { useStore } from '../hooks/useStore';
 import { styled } from '@mui/material/styles';
 
 export const Modal = ({ showModal, onClose, title, description, content, children }) => {
-  const bgColor = useStore(state => state.bgColor());
-  const textColor = useStore(state => state.textColor);
+  const bgColor = useStore(state => state.getBGColor());
+  const textColor = useStore(state => state.getTextColor);
 
   const BootstrapDialog = styled(Dialog)(({ theme }) => ({
     '& .MuiDialogContent-root': {
@@ -35,7 +35,7 @@ export const Modal = ({ showModal, onClose, title, description, content, childre
               position: 'absolute',
               right: 8,
               top: 8,
-              color: textColor(),
+              color: textColor,
             }}
           >
             <CloseIcon />

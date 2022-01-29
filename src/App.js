@@ -7,7 +7,7 @@ import { Modal } from './components/Modal';
 
 function App() {
 
-  const { modal: { show, title, description, children }, bgColor, setModalDetails } = useStore(state => ({ modal: state.modal, darkMode: state.darkMode, bgColor: state.bgColor(), setModalDetails: state.setModalDetails }));
+  const { modal: { show, title, description, children }, bgColor, setModalDetails } = useStore(state => ({ modal: state.modal, darkMode: state.darkMode, bgColor: state.getBGColor(), setModalDetails: state.setModalDetails }));
 
   useEffect(() => {
     document.body.style.backgroundColor = bgColor;

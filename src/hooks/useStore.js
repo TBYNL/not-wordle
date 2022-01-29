@@ -58,12 +58,12 @@ export const useStore = create((set, get) => ({
     return { darkMode }
   }),
 
-  bgColor: () => {
+  getBGColor: () => {
     const darkMode = get().darkMode;
     return darkMode ? 'rgba(0, 0, 0, 0.8)' : '#adadad';
   }, 
   
-  textColor: () => {
+  getTextColor: () => {
     const darkMode = get().darkMode;
     return darkMode ? '#adadad' : 'rgba(0, 0, 0, 0.8)';
   },
@@ -73,7 +73,7 @@ export const useStore = create((set, get) => ({
     return { modal: { ...modalDetails }}
   }),
 
-  word: () => {
+  getWord: () => {
     if (getLocalStorage("word")) {
       return decryptData(getLocalStorage("word"), encryptionKey);
     }

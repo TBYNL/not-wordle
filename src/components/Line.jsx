@@ -11,16 +11,17 @@ const Line = ({
   previousLineSubmitted,
   submitted,
   storedGuess,
+  numberOfLetters
 }) => {
   const [allWords] = useState(Words);
   const [invalidWord, setInvalidWord] = useState(false);
 
   const [guess, setGuess] = useState(storedGuess || []);
 
-  const word = useStore((state) => state.word());
+  const word = useStore((state) => state.getWord());
 
   const onScreenKeyPressed = useStore((state) => state.onScreenKeyPressed);
-  const inputTextColor = useStore((state) => state.textColor());
+  const inputTextColor = useStore((state) => state.getTextColor());
   const darkMode = useStore((state) => state.darkMode);
 
   const onKeyDown = (e) => {
@@ -143,7 +144,7 @@ const Line = ({
         borderRadius: "10px",
       }}
     >
-      {Array.from({ length: 5 }).map((_, i) => (
+      {Array.from({ length: numberOfLetters }).map((_, i) => (
         <Shake key={i} animate={invalidWord}>
           <Flip delay={i * 300} animate={submitted}>
             <Letter

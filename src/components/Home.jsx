@@ -7,41 +7,10 @@ import { useStore } from "../hooks/useStore";
 import { Button } from "@mui/material";
 
 const Home = () => {
-  const {
-    word,
-    setWord,
-    bgColor,
-    setModalDetails,
-    gamesPlayed,
-    setGamesPlayed,
-    gamesWon,
-    setGamesWon,
-    winStreak,
-    setWinStreak,
-    bestStreak,
-    setBestStreak,
-    storedGuesses,
-    setStoredGuesses,
-    deleteStoredGuesses,
-  } = useStore((state) => ({
-    word: state.word(),
-    setWord: state.setWord,
-    bgColor: state.bgColor,
-    setModalDetails: state.setModalDetails,
-    gamesPlayed: state.gamesPlayed,
-    setGamesPlayed: state.setGamesPlayed,
-    gamesWon: state.gamesWon,
-    setGamesWon: state.setGamesWon,
-    winStreak: state.winStreak,
-    setWinStreak: state.setWinStreak,
-    bestStreak: state.bestStreak,
-    setBestStreak: state.setBestStreak,
-    storedGuesses: state.storedGuesses,
-    setStoredGuesses: state.setStoredGuesses,
-    deleteStoredGuesses: state.deleteStoredGuesses,
-  }));
+  const store = useStore();
 
   const numberOfGuesses = 6;
+  const numberOfLetters = 5;
 
   const getBlankGuesses = (totalGuesses) => {
     return Array.from({ length: totalGuesses }).map((_, i) => ({
@@ -53,14 +22,14 @@ const Home = () => {
   };
 
   const [guesses, setGuesses] = useState(
-    storedGuesses || getBlankGuesses(numberOfGuesses)
+    store.storedGuesses || getBlankGuesses(numberOfGuesses)
   );
 
   const [correctLetters, setCorrectLetters] = useState([]);
   const [outOfPositionLetters, setOutOfPositionLetters] = useState([]);
   const [incorrectLetters, setIncorrectLetters] = useState([]);
 
-  const [wordGuessed, setWordGuessed] = useState(guesses?.some(guess => guess.values.join("") === word) || false);
+  const [wordGuessed, setWordGuessed] = useState(guesses?.some(guess => guess.values.join("") === store.getWord()) || false);
   const [totalSubmittedGuesses, setTotalSubmittedGuesses] = useState(
     guesses.filter((guess) => guess.submitted).length
   );
@@ -80,7 +49,7 @@ const Home = () => {
     });
 
     setGuesses([...updatedGuesses]);
-    setStoredGuesses([...updatedGuesses]);
+    store.setStoredGuesses([...updatedGuesses]);
   };
 
   const setLetterStates = (letters) => {
@@ -88,7 +57,7 @@ const Home = () => {
     let updatedIncorrectLetters = incorrectLetters;
     let updatedOutOfPositionLetters = outOfPositionLetters;
 
-    const wordChars = [...word].map((char, index) => {
+    const wordChars = [...store.getWord()].map((char, index) => {
       return {
         char,
         position: index + 1,
@@ -96,7 +65,7 @@ const Home = () => {
     });
 
     letters.forEach((letter, index) => {
-      if (word.includes(letter)) {
+      if (store.getWord().includes(letter)) {
         if (
           wordChars.find((char) => char.position === index + 1).char === letter
         ) {
@@ -129,13 +98,13 @@ const Home = () => {
   const gameCompleted = () => {
     setWordGuessed(true);
 
-    const updatedWinStreak = winStreak + 1;
+    const updatedWinStreak = store.winStreak + 1;
 
-    setWinStreak(updatedWinStreak);
-    setGamesWon(gamesWon + 1);
+    store.setWinStreak(updatedWinStreak);
+    store.setGamesWon(store.gamesWon + 1);
 
-    if (updatedWinStreak > bestStreak) {
-      setBestStreak(updatedWinStreak);
+    if (updatedWinStreak > store.bestStreak) {
+      store.setBestStreak(updatedWinStreak);
     }
   }
 
@@ -143,39 +112,39 @@ const Home = () => {
     let wordGuess = letters.join("");
 
     updateGuesses(letters, id);
-    setLetterStates(letters);
+    // setLetterStates(letters);
 
     // is correct
-    if (wordGuess === word) {
+    if (wordGuess === store.getWord()) {
       gameCompleted();
     } else {
       setTotalSubmittedGuesses(totalSubmittedGuesses + 1);
     }
     
-    if (wordGuess === word || totalSubmittedGuesses + 1 === numberOfGuesses) {
-      setGamesPlayed(gamesPlayed + 1);
+    if (wordGuess === store.getWord() || totalSubmittedGuesses + 1 === numberOfGuesses) {
+      store.setGamesPlayed(store.gamesPlayed + 1);
     }
   };
 
   const getNewWord = () => {
-    setModalDetails({
+    store.setModalDetails({
       title: "",
       description: "",
       show: false,
       children: undefined,
     });
 
-    deleteStoredGuesses();
-    setWord(RandomWord.toUpperCase());
+    store.deleteStoredGuesses();
+    store.setWord(RandomWord.toUpperCase());
     window.location.reload();
   };
 
   useEffect(() => {
     if (!wordGuessed && totalSubmittedGuesses === numberOfGuesses) {
       const timer = setTimeout(() => {
-        setModalDetails({
+        store.setModalDetails({
           title: "Unlucky mate",
-          description: `The word was: ${word}`,
+          description: `The word was: ${store.getWord()}`,
           show: true,
           children: (
             <Button
@@ -188,16 +157,16 @@ const Home = () => {
             </Button>
           ),
         });
-        setWinStreak(0);
-      }, 1200);
+        store.setWinStreak(0);
+      }, 1500);
       return () => clearTimeout(timer);
     }
 
     if (wordGuessed) {
       const timer = setTimeout(() => {
-        setModalDetails({
+        store.setModalDetails({
           title: "Congrats",
-          description: `The word was: ${word}`,
+          description: `The word was: ${store.getWord()}`,
           show: true,
           children: (
             <Button color="success" variant="outlined" onClick={getNewWord}>
@@ -205,11 +174,19 @@ const Home = () => {
             </Button>
           ),
         });
-      }, 1200);
+      }, 1500);
       return () => clearTimeout(timer);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [wordGuessed, totalSubmittedGuesses]);
+
+  useEffect(() => {
+    guesses.forEach(guess => {
+      setLetterStates(guess.values);
+    })
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [guesses])
 
   // useEffect(() => {
   //   fetch("https://ya5el36y0f.execute-api.us-west-2.amazonaws.com/staging")
@@ -222,7 +199,7 @@ const Home = () => {
 
   return (
     <>
-      <HomeWrapper bgColor={bgColor}>
+      <HomeWrapper bgColor={store.getBGColor}>
         {Array.from({ length: numberOfGuesses }).map((_, i) => (
           <Line
             key={i}
@@ -231,6 +208,7 @@ const Home = () => {
             previousLineSubmitted={guesses[i].previousLineSubmitted}
             submitted={guesses[i].submitted}
             storedGuess={guesses[i].values}
+            numberOfLetters={numberOfLetters}
           />
         ))}
       </HomeWrapper>
