@@ -9,9 +9,9 @@ import Switch from '@mui/material/Switch';
 import FormGroup from '@mui/material/FormGroup';
 import { useStore } from '../hooks/useStore';
 import { styled } from "@mui/material/styles";
-import Divider from "@mui/material/Divider";
+// import Divider from "@mui/material/Divider";
 import Paper from "@mui/material/Paper";
-import Stack from "@mui/material/Stack";
+// import Stack from "@mui/material/Stack";
 import Grid from "@mui/material/Grid";
 
 export const NavigationBar = () => {
