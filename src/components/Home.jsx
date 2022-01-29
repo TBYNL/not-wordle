@@ -126,6 +126,19 @@ const Home = () => {
     });
   };
 
+  const gameCompleted = () => {
+    setWordGuessed(true);
+
+    const updatedWinStreak = winStreak + 1;
+
+    setWinStreak(updatedWinStreak);
+    setGamesWon(gamesWon + 1);
+
+    if (updatedWinStreak > bestStreak) {
+      setBestStreak(updatedWinStreak);
+    }
+  }
+
   const onSubmitLine = (letters, id) => {
     let wordGuess = letters.join("");
 
@@ -134,7 +147,7 @@ const Home = () => {
 
     // is correct
     if (wordGuess === word) {
-      setWordGuessed(true);
+      gameCompleted();
     } else {
       setTotalSubmittedGuesses(totalSubmittedGuesses + 1);
     }
@@ -182,15 +195,6 @@ const Home = () => {
 
     if (wordGuessed) {
       const timer = setTimeout(() => {
-        const updatedWinStreak = winStreak + 1;
-
-        setWinStreak(updatedWinStreak);
-        setGamesWon(gamesWon + 1);
-  
-        if (updatedWinStreak > bestStreak) {
-          setBestStreak(updatedWinStreak);
-        }
-
         setModalDetails({
           title: "Congrats",
           description: `The word was: ${word}`,
