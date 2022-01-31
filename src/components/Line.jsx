@@ -178,8 +178,8 @@ const Line = ({
               borderColor={getBorderColor(guess[i])}
               bgColor={getBGColor(i)}
               textColor={inputTextColor}
-              height={gameWordLength <= 5 ? '50px' : '40px'}
-              width={gameWordLength <= 5 ? '50px' : '40px'}
+              height={gameWordLength <= 5 ? '50px' : '35px'}
+              width={gameWordLength <= 5 ? '50px' : '35px'}
             >
               {guess[i] || ""}
             </Letter>
