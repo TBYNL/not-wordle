@@ -187,6 +187,8 @@ const Home = () => {
       setIncorrectLetters([]);
       setOutOfPositionLetters([]);
     }
+    
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [store.gameWordLength])
 
   // useEffect(() => {
