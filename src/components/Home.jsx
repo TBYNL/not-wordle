@@ -227,13 +227,19 @@ const Home = () => {
 };
 
 const KeyboardWrapper = styled("div", {})(() => ({
+  // width: '98%',
+  // margin: 'auto'
+  position: 'absolute',
+  bottom: '20px',
   width: '98%',
-  margin: 'auto'
+  left: '1%',
+  right: '1%'
 }));
 
 const HomeWrapper = styled("div", {
   shouldForwardProp: (props) => props !== "bgColor",
 })((p) => ({
+  bottom: 0,
   padding: "20px",
   backgroundColor: p.bgColor,
   display: "grid",
