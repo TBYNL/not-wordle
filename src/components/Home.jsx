@@ -230,7 +230,7 @@ const KeyboardWrapper = styled("div", {})(() => ({
   // width: '98%',
   // margin: 'auto'
   position: 'absolute',
-  bottom: '20px',
+  bottom: '1%',
   width: '98%',
   left: '1%',
   right: '1%'
