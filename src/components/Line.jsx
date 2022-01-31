@@ -1,31 +1,50 @@
 import React, { useCallback, useEffect, useState } from "react";
-import styled from "styled-components";
-import { Words } from "../words";
+import { styled } from '@mui/system';
+import { Words as fourLetterWords } from "../wordFiles/fourLetterWords";
+import { Words as fiveLetterWords } from "../wordFiles/fiveLetterWords";
+import { Words as sixLetterWords } from "../wordFiles/sixLetterWords";
+import { Words as sevenLetterWords } from "../wordFiles/sevenLetterWords";
 import { useStore } from "../hooks/useStore";
 import { Shake } from "./Animation/Shake";
 import { Flip } from "./Animation/Flip";
-
 const Line = ({
   id,
   onSubmit,
-  previousLineSubmitted,
-  submitted,
-  storedGuess,
+  // previousLineSubmitted,
+  // submitted,
+  // storedGuess,
   numberOfLetters
 }) => {
-  const [allWords] = useState(Words);
-  const [invalidWord, setInvalidWord] = useState(false);
-
-  const [guess, setGuess] = useState(storedGuess || []);
-
   const word = useStore((state) => state.getWord());
+  const storedGuess = useStore((state) => state.getStoredGuesses()[id]);
 
   const onScreenKeyPressed = useStore((state) => state.onScreenKeyPressed);
   const inputTextColor = useStore((state) => state.getTextColor());
   const darkMode = useStore((state) => state.darkMode);
+  const gameWordLength = useStore((state) => state.gameWordLength);
+
+  const getAllWordsForGameLength = useCallback(() => {
+    switch (gameWordLength) {
+      case 4:
+        return fourLetterWords;
+      case 5:
+        return fiveLetterWords;    
+      case 6:
+        return sixLetterWords;    
+      case 7:
+        return sevenLetterWords;
+      default:
+        return fiveLetterWords;
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [gameWordLength])
+
+  const [invalidWord, setInvalidWord] = useState(false);
+
+  const [guess, setGuess] = useState(storedGuess?.values || []);
 
   const onKeyDown = (e) => {
-    if (submitted || !previousLineSubmitted) {
+    if (storedGuess?.submitted || !storedGuess?.previousLineSubmitted) {
       return;
     }
 
@@ -44,7 +63,7 @@ const Line = ({
     if (e.key === "Enter") {
       let wordGuess = guess.join("");
 
-      if (!allWords.includes(wordGuess.toLowerCase()) || guess.length < 5) {
+      if (!getAllWordsForGameLength().includes(wordGuess.toLowerCase()) || guess.length < gameWordLength) {
         setInvalidWord(true);
         return;
       }
@@ -53,7 +72,7 @@ const Line = ({
       onSubmit(guess, id);
     }
 
-    if (/^[a-z]$/.test(e.key.toLowerCase()) && guess.length < 5) {
+    if (/^[a-z]$/.test(e.key.toLowerCase()) && guess.length < gameWordLength) {
       setGuess((prev) => [...prev, e.key.toUpperCase()]);
     }
   };
@@ -68,7 +87,7 @@ const Line = ({
   const getBGColor = useCallback(
     (index) => {
       let color;
-      if (submitted) {
+      if (storedGuess?.submitted) {
         const letter = guess[index];
 
         if (word.includes(letter)) {
@@ -81,7 +100,7 @@ const Line = ({
           }
         }
 
-        if (!submitted) {
+        if (!storedGuess?.submitted) {
           color = "";
         }
       }
@@ -89,7 +108,7 @@ const Line = ({
       return color;
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [submitted]
+    [storedGuess?.submitted, gameWordLength]
   );
 
   const getBorderColor = useCallback((value) => {
@@ -100,10 +119,10 @@ const Line = ({
     return value !== undefined ? "#417505" : inputTextColor;
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [darkMode, invalidWord]);
+  }, [darkMode, invalidWord, gameWordLength]);
 
   useEffect(() => {
-    if (onScreenKeyPressed && !submitted && previousLineSubmitted) {
+    if (onScreenKeyPressed && !storedGuess?.submitted && storedGuess?.previousLineSubmitted) {
       var keyDown = new KeyboardEvent("keydown", {
         bubbles: true,
         cancelable: true,
@@ -114,6 +133,14 @@ const Line = ({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [onScreenKeyPressed]);
+
+  useEffect(() => {
+    if (storedGuess?.values.length === 0) {
+      setGuess([]);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [gameWordLength]);
+
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -131,11 +158,11 @@ const Line = ({
       window.removeEventListener("keydown", onKeyDown);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [guess.length, guess, previousLineSubmitted, submitted]);
+  }, [guess.length, guess, storedGuess?.previousLineSubmitted, storedGuess?.submitted]);
 
   return (
     <fieldset
-      disabled={submitted || !previousLineSubmitted}
+      disabled={storedGuess?.submitted || !storedGuess?.previousLineSubmitted}
       style={{
         border: "none",
         display: "flex",
@@ -146,11 +173,13 @@ const Line = ({
     >
       {Array.from({ length: numberOfLetters }).map((_, i) => (
         <Shake key={i} animate={invalidWord}>
-          <Flip delay={i * 300} animate={submitted}>
+          <Flip delay={i * 300} animate={storedGuess?.submitted}>
             <Letter
               borderColor={getBorderColor(guess[i])}
               bgColor={getBGColor(i)}
               textColor={inputTextColor}
+              height={gameWordLength <= 5 ? '50px' : '35px'}
+              width={gameWordLength <= 5 ? '50px' : '35px'}
             >
               {guess[i] || ""}
             </Letter>
@@ -167,8 +196,8 @@ const Letter = styled("span", {
   shouldForwardProp: (props) =>
     !["bgColor", "textColor", "borderColor", "shake"].includes(props),
 })((p) => ({
-  width: "50px",
-  height: "50px",
+  width: p.width,
+  height: p.height,
   display: "flex",
   justifyContent: "center",
   alignItems: "center",
@@ -180,10 +209,3 @@ const Letter = styled("span", {
   backgroundColor: p.bgColor,
   color: p.textColor,
 }));
-
-// const bounceAnimation = keyframes`${fadeIn}`;
-
-// const BouncyDiv = styled.div`
-//   animation: .8s ${bounceAnimation};
-//   animation-delay: ${props => props.delay}s;
-// `;

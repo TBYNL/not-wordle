@@ -6,7 +6,7 @@ export const Flip = ({ delay, animate, children, ...props }) => {
     delay: delay,
     from: { rotateX: 0, scale: 1 },
     to: { rotateX: animate ? 360 : 0, },
-    config: { duration: 750 }
+    config: { duration: 500 }
   });
 
   return (

@@ -1,38 +1,32 @@
 import React, { useEffect, useState } from "react";
-import { RandomWord } from "../words";
 import { Keyboard } from "./Keyboard/Keyboard";
 import Line from "./Line";
-import styled from "styled-components";
+import { styled } from '@mui/system';
 import { useStore } from "../hooks/useStore";
 import { Button } from "@mui/material";
 
 const Home = () => {
   const store = useStore();
 
-  const numberOfGuesses = 6;
-  const numberOfLetters = 5;
+  const numberOfGuesses = store.gameWordLength + 1;
+  const numberOfLetters = store.gameWordLength;
 
-  const getBlankGuesses = (totalGuesses) => {
-    return Array.from({ length: totalGuesses }).map((_, i) => ({
-      id: i,
-      submitted: false,
-      values: [],
-      previousLineSubmitted: i === 0 ? true : false,
-    }));
-  };
+  // const getBlankGuesses = (totalGuesses) => {
+  //   return Array.from({ length: totalGuesses }).map((_, i) => ({
+  //     id: i,
+  //     submitted: false,
+  //     values: [],
+  //     previousLineSubmitted: i === 0 ? true : false,
+  //   }));
+  // };
 
-  const [guesses, setGuesses] = useState(
-    store.storedGuesses || getBlankGuesses(numberOfGuesses)
-  );
+  const guesses = store.getStoredGuesses();
 
   const [correctLetters, setCorrectLetters] = useState([]);
   const [outOfPositionLetters, setOutOfPositionLetters] = useState([]);
   const [incorrectLetters, setIncorrectLetters] = useState([]);
 
-  const [wordGuessed, setWordGuessed] = useState(guesses?.some(guess => guess.values.join("") === store.getWord()) || false);
-  const [totalSubmittedGuesses, setTotalSubmittedGuesses] = useState(
-    guesses.filter((guess) => guess.submitted).length
-  );
+  const [wordGuessed, setWordGuessed] = useState(guesses.some(guess => guess.values.join("") === store.getWord()) || false);
 
   const updateGuesses = (letters, index) => {
     const updatedGuesses = guesses.map((g, i) => {
@@ -48,7 +42,7 @@ const Home = () => {
       return g;
     });
 
-    setGuesses([...updatedGuesses]);
+    // setGuesses([...updatedGuesses]);
     store.setStoredGuesses([...updatedGuesses]);
   };
 
@@ -67,7 +61,7 @@ const Home = () => {
     letters.forEach((letter, index) => {
       if (store.getWord().includes(letter)) {
         if (
-          wordChars.find((char) => char.position === index + 1).char === letter
+          wordChars?.find((char) => char.position === index + 1).char === letter
         ) {
           // correct
           updatedCorrectLetters.push(letter);
@@ -112,16 +106,13 @@ const Home = () => {
     let wordGuess = letters.join("");
 
     updateGuesses(letters, id);
-    // setLetterStates(letters);
 
     // is correct
     if (wordGuess === store.getWord()) {
       gameCompleted();
-    } else {
-      setTotalSubmittedGuesses(totalSubmittedGuesses + 1);
     }
     
-    if (wordGuess === store.getWord() || totalSubmittedGuesses + 1 === numberOfGuesses) {
+    if (wordGuess === store.getWord() || guesses.filter((guess) => guess.submitted).length === numberOfGuesses) {
       store.setGamesPlayed(store.gamesPlayed + 1);
     }
   };
@@ -135,12 +126,12 @@ const Home = () => {
     });
 
     store.deleteStoredGuesses();
-    store.setWord(RandomWord.toUpperCase());
+    store.setWord(store.gameWordLength);
     window.location.reload();
   };
 
   useEffect(() => {
-    if (!wordGuessed && totalSubmittedGuesses === numberOfGuesses) {
+    if (!wordGuessed && guesses.filter((guess) => guess.submitted).length === numberOfGuesses) {
       const timer = setTimeout(() => {
         store.setModalDetails({
           title: "Unlucky mate",
@@ -178,15 +169,25 @@ const Home = () => {
       return () => clearTimeout(timer);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [wordGuessed, totalSubmittedGuesses]);
+  }, [wordGuessed, guesses]);
 
   useEffect(() => {
     guesses.forEach(guess => {
+    if (guess?.values?.length > 0) {
       setLetterStates(guess.values);
-    })
+    }
+  })
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [guesses])
+
+  useEffect(() => {
+    if (guesses.filter((guess) => guess.values.length > 0).length === 0) {
+      setCorrectLetters([]);
+      setIncorrectLetters([]);
+      setOutOfPositionLetters([]);
+    }
+  }, [store.gameWordLength])
 
   // useEffect(() => {
   //   fetch("https://ya5el36y0f.execute-api.us-west-2.amazonaws.com/staging")
@@ -199,15 +200,12 @@ const Home = () => {
 
   return (
     <>
-      <HomeWrapper bgColor={store.getBGColor}>
+      <HomeWrapper bgColor={store.bgColor}>
         {Array.from({ length: numberOfGuesses }).map((_, i) => (
           <Line
             key={i}
             id={i}
             onSubmit={onSubmitLine}
-            previousLineSubmitted={guesses[i].previousLineSubmitted}
-            submitted={guesses[i].submitted}
-            storedGuess={guesses[i].values}
             numberOfLetters={numberOfLetters}
           />
         ))}
@@ -223,10 +221,10 @@ const Home = () => {
   );
 };
 
-const KeyboardWrapper = styled.div`
-  width: 98%;
-  margin: auto;
-`;
+const KeyboardWrapper = styled("div", {})(() => ({
+  width: '98%',
+  margin: 'auto'
+}));
 
 const HomeWrapper = styled("div", {
   shouldForwardProp: (props) => props !== "bgColor",

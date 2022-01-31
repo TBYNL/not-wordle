@@ -1,6 +1,9 @@
 import create from 'zustand'
 import { decryptData, encryptData } from '../utils';
-import { RandomWord } from "../words";
+import { RandomWord as randomFourLetterWord } from "../wordFiles/fourLetterWords";
+import { RandomWord as randomFiveLetterWord } from "../wordFiles/fiveLetterWords";
+import { RandomWord as randomSixLetterWord } from "../wordFiles/sixLetterWords";
+import { RandomWord as randomSevenLetterWord } from "../wordFiles/sevenLetterWords";
 
 const encryptionKey = "NotWordleEncryptionKey";
 
@@ -10,11 +13,64 @@ const setLocalStorage = (key, value) =>
 const deleteLocalStorage = (key, value) =>
   window.localStorage.removeItem(key);
 
+const getRandomWord = (gameWordLength) => {
+  switch (gameWordLength) {
+    case 4:
+      return randomFourLetterWord.toUpperCase();
+    case 5:
+      return randomFiveLetterWord.toUpperCase();
+    case 6:
+      return randomSixLetterWord.toUpperCase();
+    case 7:
+      return randomSevenLetterWord.toUpperCase();
+    default:
+      return randomFiveLetterWord.toUpperCase();
+  }
+}
+
+const getBlankGuesses = (totalGuesses) => {
+  return Array.from({ length: totalGuesses }).map((_, i) => ({
+    id: i,
+    submitted: false,
+    values: [],
+    previousLineSubmitted: i === 0 ? true : false,
+  }));
+};
+
 export const useStore = create((set, get) => ({
+  // Keyboard state
   onScreenKeyPressed: undefined,
   setOnScreenKeyPressed: (key) => set({ onScreenKeyPressed: key }),
 
-  storedGuesses: getLocalStorage("storedGuesses") ?? null,
+  gameWordLength: getLocalStorage("gameWordLength") || 5,
+  setGameWordLength: (gameWordLength) => set(() => {
+    setLocalStorage("gameWordLength", gameWordLength);
+    get().setWord(gameWordLength);
+    get().setStoredGuesses(getBlankGuesses(gameWordLength + 1));
+    return { gameWordLength }
+  }),
+
+  // Game state
+  getWord: () => {
+    if (getLocalStorage("word")) {
+      return decryptData(getLocalStorage("word"), encryptionKey);
+    }
+
+    const newWord = getRandomWord(get().gameWordLength);
+
+    setLocalStorage("word", encryptData(newWord, "NotWordleEncryptionKey"));
+    return newWord;
+  },
+  setWord: (length) => set(() => {
+    const newWord = getRandomWord(length);
+
+    setLocalStorage("word", encryptData(newWord, "NotWordleEncryptionKey"));
+    return newWord;
+  }),
+
+  getStoredGuesses: () => {
+    return getLocalStorage("storedGuesses") ?? getBlankGuesses(get().gameWordLength + 1)
+  },
   setStoredGuesses: (storedGuesses) => set(() => {
     setLocalStorage("storedGuesses", storedGuesses);
     return { storedGuesses }
@@ -28,6 +84,7 @@ export const useStore = create((set, get) => ({
   // incorrectLetters
   // setIncorrectLetters
 
+  // Stats state
   gamesPlayed: getLocalStorage("gamesPlayed") ?? 0,
   setGamesPlayed: (gamesPlayed) => set(() => {
     setLocalStorage("gamesPlayed", gamesPlayed);
@@ -52,6 +109,7 @@ export const useStore = create((set, get) => ({
     return { bestStreak }
   }),
 
+  // Page state
   darkMode: getLocalStorage("darkMode") ?? true,
   setDarkMode: (darkMode) => set(() => {
     setLocalStorage("darkMode", darkMode);
@@ -72,19 +130,4 @@ export const useStore = create((set, get) => ({
   setModalDetails: (modalDetails) => set((state) => {
     return { modal: { ...modalDetails }}
   }),
-
-  getWord: () => {
-    if (getLocalStorage("word")) {
-      return decryptData(getLocalStorage("word"), encryptionKey);
-    }
-    
-    const newWord = RandomWord.toUpperCase();
-
-    setLocalStorage("word", encryptData(newWord, "NotWordleEncryptionKey"));
-    return newWord;
-  },
-  setWord: (word) => set((state) => {
-    setLocalStorage("word", encryptData(word, "NotWordleEncryptionKey"));
-    return word;
-  })
 }))

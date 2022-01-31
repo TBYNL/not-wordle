@@ -1,34 +1,27 @@
-import * as React from 'react';
+import React from 'react';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 import AccountCircle from '@mui/icons-material/AccountCircle';
-import Switch from '@mui/material/Switch';
+import Settings from '@mui/icons-material/Settings';
 import FormGroup from '@mui/material/FormGroup';
 import { useStore } from '../hooks/useStore';
 import { styled } from "@mui/material/styles";
-// import Divider from "@mui/material/Divider";
 import Paper from "@mui/material/Paper";
-// import Stack from "@mui/material/Stack";
 import Grid from "@mui/material/Grid";
+import SettingsModalContent from './SettingsModalContent';
 
 export const NavigationBar = () => {
-  const { darkMode, setDarkMode, gamesPlayed, gamesWon, winStreak, bestStreak, setModalDetails, textColor } = useStore(state => ({ 
-    darkMode: state.darkMode, 
-    setDarkMode: state.setDarkMode,
+  const { gamesPlayed, gamesWon, winStreak, bestStreak, setModalDetails, textColor } = useStore(state => ({ 
     gamesPlayed: state.gamesPlayed,
     gamesWon: state.gamesWon,
     winStreak: state.winStreak,
     bestStreak: state.bestStreak,
     setModalDetails: state.setModalDetails,
-    textColor: state.getTextColor
+    textColor: state.getTextColor()
   }));
-
-  const handleChange = (event) => {
-    setDarkMode(event.target.checked);
-  };
 
   const getWinPercentage = () => {
     if(gamesPlayed && gamesPlayed > 0) {
@@ -38,17 +31,10 @@ export const NavigationBar = () => {
     } else {
       return 0
     }
-    
   }
 
   const ProfileModalContent = () => {
     return (
-      <div>
-        {/* <Stack
-          direction="row"
-          divider={<Divider orientation="vertical" flexItem />}
-          spacing={0.5}
-        > */}
         <Grid container spacing={2}>
           <Grid item xs={4}>
             <Item>
@@ -81,109 +67,64 @@ export const NavigationBar = () => {
             </Item>
           </Grid>
         </Grid>
-        {/* <Stack
-          direction="row"
-          divider={<Divider orientation="vertical" flexItem />}
-          spacing={0.5}
-        >
-          <Item>
-            <h2>{winStreak || 0}</h2>
-            Current Streak
-          </Item>
-          <Item>
-            <h2>{bestStreak || 0}</h2>
-            Best streak
-          </Item>
-        </Stack> */}
-      </div>
     );
   }
 
-  const handleMenu = () => {
+  const openProfile = () => {
     setModalDetails({
       title: 'Statistics',
-      content: <ProfileModalContent />,
       show: true,
       children: <ProfileModalContent />
+    })
+  };  
+  
+  const openSettings = () => {
+    setModalDetails({
+      title: 'Statistics',
+      show: true,
+      children: <SettingsModalContent />
     })
   };
 
   return (
-    <Box sx={{ flexGrow: 1, textAlign: 'center', fontFamily: 'Bebas Neue' }}>
-      <AppBar position="static" sx={{ backgroundColor: '#417505' }}>
-        <Toolbar>
-          <FormGroup sx={{ maxWidth: '10%', color: textColor }}>
-            <DarkModeSwitch
-              checked={darkMode}
-              onChange={handleChange}
-              aria-label="login switch"
-              color='warning'
-            />
-          </FormGroup>
-          <Typography variant="h4" component="div" sx={{ flexGrow: 1, color: textColor }}>
-            !Wordle
-          </Typography>
-          <div>
-            <IconButton
-              size="large"
-              aria-label="account of current user"
-              aria-controls="menu-appbar"
-              aria-haspopup="true"
-              onClick={handleMenu}
-              sx={{ color: '#C0C0C0' }}
-            >
-              <AccountCircle />
-            </IconButton>
-          </div>
-        </Toolbar>
-      </AppBar>
-    </Box>
+    <>
+      <Box sx={{ flexGrow: 1, textAlign: 'center', fontFamily: 'Bebas Neue' }}>
+        <AppBar position="static" sx={{ backgroundColor: '#417505' }}>
+          <Toolbar>
+            <FormGroup sx={{ maxWidth: '10%', color: textColor }}>
+              <IconButton
+                size="large"
+                aria-label="account of current user"
+                aria-controls="menu-appbar"
+                aria-haspopup="true"
+                onClick={openSettings}
+                sx={{ color: '#C0C0C0' }}
+              >
+                <Settings />
+              </IconButton>
+            </FormGroup>
+            <Typography variant="h4" component="div" sx={{ flexGrow: 1, color: textColor }}>
+              !Wordle
+            </Typography>
+            <div>
+              <IconButton
+                size="large"
+                aria-label="account of current user"
+                aria-controls="menu-appbar"
+                aria-haspopup="true"
+                onClick={openProfile}
+                sx={{ color: '#C0C0C0' }}
+              >
+                <AccountCircle />
+              </IconButton>
+            </div>
+          </Toolbar>
+        </AppBar>
+      </Box>
+      {/* <SettingsModal show={showSettingsModal} onClose={() => setShowSettingsModal(false)} /> */}
+    </>
   )
 }
-
-const DarkModeSwitch = styled(Switch)(({ darkMode }) => ({
-  '& .MuiSwitch-switchBase': {
-    margin: 1,
-    padding: 0,
-    transform: 'translate(6px, 6px)',
-    '&.Mui-checked': {
-      color: '#fff',
-      transform: 'translate(22px, 6px)',
-      '& .MuiSwitch-thumb:before': {
-        backgroundImage: `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" height="20" width="20" viewBox="0 0 20 20"><path fill="${encodeURIComponent(
-          '#fff',
-        )}" d="M4.2 2.5l-.7 1.8-1.8.7 1.8.7.7 1.8.6-1.8L6.7 5l-1.9-.7-.6-1.8zm15 8.3a6.7 6.7 0 11-6.6-6.6 5.8 5.8 0 006.6 6.6z"/></svg>')`,
-      },
-      '& + .MuiSwitch-track': {
-        opacity: 1,
-        backgroundColor: darkMode ? '#8796A5' : '##ed6c02',
-      },
-    },
-  },
-  '& .MuiSwitch-thumb': {
-    backgroundColor: darkMode ? '#8796A5' : '#ed6c02',
-    width: 24,
-    height: 24,
-    '&:before': {
-      content: "''",
-      position: 'absolute',
-      width: '100%',
-      height: '100%',
-      left: 0,
-      top: 0,
-      backgroundRepeat: 'no-repeat',
-      backgroundPosition: 'center',
-      backgroundImage: `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" height="20" width="20" viewBox="0 0 20 20"><path fill="${encodeURIComponent(
-        '#fff',
-      )}" d="M9.305 1.667V3.75h1.389V1.667h-1.39zm-4.707 1.95l-.982.982L5.09 6.072l.982-.982-1.473-1.473zm10.802 0L13.927 5.09l.982.982 1.473-1.473-.982-.982zM10 5.139a4.872 4.872 0 00-4.862 4.86A4.872 4.872 0 0010 14.862 4.872 4.872 0 0014.86 10 4.872 4.872 0 0010 5.139zm0 1.389A3.462 3.462 0 0113.471 10a3.462 3.462 0 01-3.473 3.472A3.462 3.462 0 016.527 10 3.462 3.462 0 0110 6.528zM1.665 9.305v1.39h2.083v-1.39H1.666zm14.583 0v1.39h2.084v-1.39h-2.084zM5.09 13.928L3.616 15.4l.982.982 1.473-1.473-.982-.982zm9.82 0l-.982.982 1.473 1.473.982-.982-1.473-1.473zM9.305 16.25v2.083h1.389V16.25h-1.39z"/></svg>')`,
-    },
-  },
-  '& .MuiSwitch-track': {
-    opacity: 1,
-    backgroundColor: darkMode ? '#8796A5' : '#aab4be',
-    borderRadius: 20 / 2,
-  },
-}));
 
 const Item = styled(Paper)(({ theme }) => ({
   ...theme.typography.body2,

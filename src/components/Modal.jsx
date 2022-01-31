@@ -2,25 +2,11 @@ import React from 'react';
 import { Dialog, DialogContent, DialogActions, Typography, IconButton, DialogTitle } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import { useStore } from '../hooks/useStore';
-import { styled } from '@mui/material/styles';
 
-export const Modal = ({ showModal, onClose, title, description, content, children }) => {
+const Modal = ({ showModal, onClose, title, description, children }) => {
   const bgColor = useStore(state => state.getBGColor());
   const textColor = useStore(state => state.getTextColor);
 
-  const BootstrapDialog = styled(Dialog)(({ theme }) => ({
-    '& .MuiDialogContent-root': {
-      padding: theme.spacing(3),
-      borderColor: 'grey'
-    },
-    '& .MuiDialogActions-root': {
-      padding: theme.spacing(1),
-    },
-    // '& .MuiPaper-root': {
-    //   color: textColor  
-    // }
-  }));
-  
   const BootstrapDialogTitle = (props) => {
     const { children, onClose, ...other } = props;
   
@@ -46,28 +32,25 @@ export const Modal = ({ showModal, onClose, title, description, content, childre
   };
 
   return (
-    <div>
-      <BootstrapDialog
-        onClose={onClose}
-        aria-labelledby="customized-dialog-title"
-        open={showModal}
-        PaperProps={{ style: { backgroundColor: bgColor, color: textColor() }}}
-      >
-        <BootstrapDialogTitle id="customized-dialog-title" onClose={onClose}>
-          {title}
-        </BootstrapDialogTitle>
-        <DialogContent dividers>
-          <Typography gutterBottom>
-            {description}
-          </Typography>
-          <DialogActions sx={{ display: 'inline-flex'}}>
-            {children}
-          </DialogActions>
-        </DialogContent>
-          {/* <DialogActions>
-            {children}
-          </DialogActions> */}
-      </BootstrapDialog>
-    </div>
+    <Dialog
+      onClose={onClose}
+      aria-labelledby="customized-dialog-title"
+      open={showModal}
+      PaperProps={{ style: { backgroundColor: bgColor, color: textColor() }}}
+    >
+      <BootstrapDialogTitle id="customized-dialog-title" onClose={onClose}>
+        {title}
+      </BootstrapDialogTitle>
+      <DialogContent dividers>
+        <Typography gutterBottom>
+          {description}
+        </Typography>
+        <DialogActions>
+          {children}
+        </DialogActions>
+      </DialogContent>
+    </Dialog>
   )
 }
+
+export default Modal;

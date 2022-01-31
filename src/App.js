@@ -3,7 +3,7 @@ import './App.css';
 import Home from './components/Home';
 import { NavigationBar } from './components/NavigationBar';
 import { useStore } from './hooks/useStore';
-import { Modal } from './components/Modal';
+import Modal from './components/Modal';
 
 function App() {
 
