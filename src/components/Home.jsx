@@ -228,7 +228,7 @@ const Home = () => {
 
 const KeyboardWrapper = styled("div", {})(() => ({
   margin: 'auto',
-  marginTop: '10vh',
+  marginTop: '1vh',
   width: '98%',
 }));
 
