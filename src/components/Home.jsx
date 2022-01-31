@@ -127,7 +127,10 @@ const Home = () => {
 
     store.deleteStoredGuesses();
     store.setWord(store.gameWordLength);
-    window.location.reload();
+    const timer = setTimeout(() => {
+      window.location.reload();
+    }, 500);
+    return () => clearTimeout(timer);
   };
 
   useEffect(() => {
