@@ -195,6 +195,7 @@ const Home = () => {
   }, [store.gameWordLength])
 
   // useEffect(() => {
+  //   fetch("https://api.datamuse.com/words?sp=spacious&max=1")
   //   fetch("https://ya5el36y0f.execute-api.us-west-2.amazonaws.com/staging")
   //     .then((res) => res.json())
   //     .then((json) => {

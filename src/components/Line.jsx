@@ -63,13 +63,23 @@ const Line = ({
     if (e.key === "Enter") {
       let wordGuess = guess.join("");
 
-      if (!getAllWordsForGameLength().includes(wordGuess.toLowerCase()) || guess.length < gameWordLength) {
-        setInvalidWord(true);
-        return;
-      }
+      fetch(`https://api.datamuse.com/words?sp=${wordGuess}&max=1`)
+      .then((res) => res.json())
+      .then((json) => {
+        if (json.length === 1) {
+          const returnedWord = json[0].word;
 
-      setInvalidWord(false);
-      onSubmit(guess, id);
+          // if (!getAllWordsForGameLength().includes(wordGuess.toLowerCase()) || guess.length < gameWordLength) {
+          if (guess.length < gameWordLength || returnedWord.toUpperCase() !== wordGuess)
+          {
+            setInvalidWord(true);
+            return;
+          }
+    
+          setInvalidWord(false);
+          onSubmit(guess, id);
+        }
+      });
     }
 
     if (/^[a-z]$/.test(e.key.toLowerCase()) && guess.length < gameWordLength) {
