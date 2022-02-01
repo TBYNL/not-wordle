@@ -46,7 +46,6 @@ export const Keyboard = ({ correctLetters, outOfPositionLetters, incorrectLetter
       }}
       display={{
         "{bksp}": "⌫",
-        // "Enter": "⏎"
       }}
       buttonTheme={[
         { 

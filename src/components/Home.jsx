@@ -216,27 +216,30 @@ const Home = () => {
           />
         ))}
       </HomeWrapper>
-      <KeyboardWrapper>
-        <Keyboard
-          correctLetters={correctLetters}
-          outOfPositionLetters={outOfPositionLetters}
-          incorrectLetters={incorrectLetters}
-        />
-      </KeyboardWrapper>
+      <div style={{ display: 'flex',justifyContent: 'center' }}>
+        <KeyboardWrapper>
+          <Keyboard
+            correctLetters={correctLetters}
+            outOfPositionLetters={outOfPositionLetters}
+            incorrectLetters={incorrectLetters}
+          />
+        </KeyboardWrapper>
+      </div>
     </>
   );
 };
 
 const KeyboardWrapper = styled("div", {})(() => ({
-  margin: 'auto',
-  marginTop: '1vh',
-  width: '98%',
+  flexGrow: 1,
+  maxWidth: '400px',
+  margin: '1%',
+  justifyContent: 'center'
 }));
 
 const HomeWrapper = styled("div", {
   shouldForwardProp: (props) => props !== "bgColor",
 })((p) => ({
-  bottom: 0,
+  marginBottom: '10px',
   padding: "20px",
   backgroundColor: p.bgColor,
   display: "grid",

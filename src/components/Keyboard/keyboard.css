@@ -9,25 +9,6 @@
   --dark-mode-active-color: #ed6c02;
 }
 
-.simple-keyboard {
-  align-content: center;
-  max-width: 90%;
-}
-
-.simple-keyboard.myTheme1 {
-  border-radius: 0;
-  border-bottom-right-radius: 5px;
-  border-bottom-left-radius: 5px;
-}
-
-.simple-keyboard.myTheme1.dark {
-  background-color: var(--dark-mode-bgcolor);
-}
-
-.simple-keyboard.myTheme1.light {
-  background-color: var(--light-mode-bgcolor);
-}
-
 .simple-keyboard.myTheme1 .hg-button {
   height: 50px;
   display: flex;
@@ -92,7 +73,3 @@
   box-shadow: 0px 0px 40px 5px rgba(255, 255, 0, 0.5);
   z-index: 1;
 }
-
-/* .hg-theme-default .hg-row .hg-button:not(:last-child) {
-  margin-right: 5px;
-} */

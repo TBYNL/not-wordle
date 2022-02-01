@@ -1,6 +1,5 @@
 import React from 'react';
 import AppBar from '@mui/material/AppBar';
-import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
@@ -88,40 +87,37 @@ export const NavigationBar = () => {
 
   return (
     <>
-      <Box sx={{ flexGrow: 1, textAlign: 'center', fontFamily: 'Bebas Neue' }}>
-        <AppBar position="static" sx={{ backgroundColor: '#417505' }}>
-          <Toolbar>
-            <FormGroup sx={{ maxWidth: '10%', color: textColor }}>
-              <IconButton
-                size="large"
-                aria-label="account of current user"
-                aria-controls="menu-appbar"
-                aria-haspopup="true"
-                onClick={openSettings}
-                sx={{ color: '#C0C0C0' }}
-              >
-                <Settings />
-              </IconButton>
-            </FormGroup>
-            <Typography variant="h4" component="div" sx={{ flexGrow: 1, color: textColor }}>
-              !Wordle
-            </Typography>
-            <div>
-              <IconButton
-                size="large"
-                aria-label="account of current user"
-                aria-controls="menu-appbar"
-                aria-haspopup="true"
-                onClick={openProfile}
-                sx={{ color: '#C0C0C0' }}
-              >
-                <AccountCircle />
-              </IconButton>
-            </div>
-          </Toolbar>
-        </AppBar>
-      </Box>
-      {/* <SettingsModal show={showSettingsModal} onClose={() => setShowSettingsModal(false)} /> */}
+      <AppBar position="static" sx={{ display: 'grid', backgroundColor: '#417505', justifyContent: 'center' }}>
+        <Toolbar sx={{ display: 'flex', justifyContent: 'center', maxWidth: '400px' }}>
+          <FormGroup sx={{ color: textColor }}>
+            <IconButton
+              size="large"
+              aria-label="account of current user"
+              aria-controls="menu-appbar"
+              aria-haspopup="true"
+              onClick={openSettings}
+              sx={{ color: '#C0C0C0'}}
+            >
+              <Settings />
+            </IconButton>
+          </FormGroup>
+          <Typography variant="h4" component="div" sx={{ color: textColor, textAlign: 'center', fontFamily: 'Staatliches' }}>
+            !WORDLE
+          </Typography>
+          <div>
+            <IconButton
+              size="large"
+              aria-label="account of current user"
+              aria-controls="menu-appbar"
+              aria-haspopup="true"
+              onClick={openProfile}
+              sx={{ color: '#C0C0C0' }}
+            >
+              <AccountCircle />
+            </IconButton>
+          </div>
+        </Toolbar>
+      </AppBar>
     </>
   )
 }
