@@ -205,7 +205,7 @@ const Home = () => {
   // }, []);
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', height: '600px' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', height: '575px' }}>
       <Board bgColor={store.bgColor}>
         {Array.from({ length: numberOfGuesses }).map((_, i) => (
           <Line
