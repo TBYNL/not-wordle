@@ -101,7 +101,7 @@ export const NavigationBar = () => {
               <Settings />
             </IconButton>
           </FormGroup>
-          <Typography variant="h4" component="div" sx={{ color: textColor, textAlign: 'center', fontFamily: 'Staatliches' }}>
+          <Typography variant="h4" component="div" sx={{ color: textColor, textAlign: 'center', fontFamily: 'Staatliches', marginX: '50px' }}>
             !WORDLE
           </Typography>
           <div>

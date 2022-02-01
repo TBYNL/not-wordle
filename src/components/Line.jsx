@@ -1,9 +1,9 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { styled } from '@mui/system';
-// import { Words as fourLetterWords } from "../wordFiles/fourLetterWords";
-// import { Words as fiveLetterWords } from "../wordFiles/fiveLetterWords";
-// import { Words as sixLetterWords } from "../wordFiles/sixLetterWords";
-// import { Words as sevenLetterWords } from "../wordFiles/sevenLetterWords";
+import { Words as fourLetterWords } from "../wordFiles/fourLetterWords";
+import { Words as fiveLetterWords } from "../wordFiles/fiveLetterWords";
+import { Words as sixLetterWords } from "../wordFiles/sixLetterWords";
+import { Words as sevenLetterWords } from "../wordFiles/sevenLetterWords";
 import { useStore } from "../hooks/useStore";
 import { Shake } from "./Animation/Shake";
 import { Flip } from "./Animation/Flip";
@@ -23,21 +23,21 @@ const Line = ({
   const darkMode = useStore((state) => state.darkMode);
   const gameWordLength = useStore((state) => state.gameWordLength);
 
-  // const getAllWordsForGameLength = useCallback(() => {
-  //   switch (gameWordLength) {
-  //     case 4:
-  //       return fourLetterWords;
-  //     case 5:
-  //       return fiveLetterWords;    
-  //     case 6:
-  //       return sixLetterWords;    
-  //     case 7:
-  //       return sevenLetterWords;
-  //     default:
-  //       return fiveLetterWords;
-  //   }
-  // // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [gameWordLength])
+  const getAllWordsForGameLength = useCallback(() => {
+    switch (gameWordLength) {
+      case 4:
+        return fourLetterWords;
+      case 5:
+        return fiveLetterWords;    
+      case 6:
+        return sixLetterWords;    
+      case 7:
+        return sevenLetterWords;
+      default:
+        return fiveLetterWords;
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [gameWordLength])
 
   const [invalidWord, setInvalidWord] = useState(false);
 
@@ -63,23 +63,20 @@ const Line = ({
     if (e.key === "Enter") {
       let wordGuess = guess.join("");
 
-      fetch(`https://api.datamuse.com/words?sp=${wordGuess}&max=1`)
-      .then((res) => res.json())
-      .then((json) => {
-        if (json.length === 1) {
-          const returnedWord = json[0].word;
+      // fetch(`https://api.datamuse.com/words?sp=${wordGuess}&max=1`)
+      // .then((res) => res.json())
+      // .then((json) => {
+      //   if (json.length === 1) {
+      //     const returnedWord = json[0].word;
 
-          // if (!getAllWordsForGameLength().includes(wordGuess.toLowerCase()) || guess.length < gameWordLength) {
-          if (guess.length < gameWordLength || returnedWord.toUpperCase() !== wordGuess)
-          {
-            setInvalidWord(true);
-            return;
-          }
+      if (!getAllWordsForGameLength().includes(wordGuess.toLowerCase()) || guess.length < gameWordLength) {
+      // if (guess.length < gameWordLength || returnedWord.toUpperCase() !== wordGuess)
+        setInvalidWord(true);
+        return;
+      }
     
-          setInvalidWord(false);
-          onSubmit(guess, id);
-        }
-      });
+      setInvalidWord(false);
+      onSubmit(guess, id);
     }
 
     if (/^[a-z]$/.test(e.key.toLowerCase()) && guess.length < gameWordLength) {
