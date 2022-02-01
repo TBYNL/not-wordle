@@ -205,8 +205,8 @@ const Home = () => {
   // }, []);
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-      <HomeWrapper bgColor={store.bgColor}>
+    <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', height: '600px' }}>
+      <Board bgColor={store.bgColor}>
         {Array.from({ length: numberOfGuesses }).map((_, i) => (
           <Line
             key={i}
@@ -215,7 +215,7 @@ const Home = () => {
             numberOfLetters={numberOfLetters}
           />
         ))}
-      </HomeWrapper>
+      </Board>
       <div style={{ display: 'flex',justifyContent: 'center' }}>
         <KeyboardWrapper>
           <Keyboard
@@ -229,7 +229,7 @@ const Home = () => {
   );
 };
 
-const HomeWrapper = styled("div", {
+const Board = styled("div", {
   shouldForwardProp: (props) => props !== "bgColor",
 })((p) => ({
   padding: "10px",
